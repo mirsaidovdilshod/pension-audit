@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0a3d2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pensiya Audit">
+<title>Pensiya Auditor</title>
+<link rel="manifest" href="#" id="manifest-link">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0a1a14;
+    --bg2: #0f2318;
+    --bg3: #142d1f;
+    --accent: #2ecc71;
+    --accent2: #27ae60;
+    --accent-dim: rgba(46,204,113,0.12);
+    --accent-border: rgba(46,204,113,0.3);
+    --text: #e8f5e9;
+    --text2: #81c784;
+    --text3: #4caf50;
+    --warn: #f39c12;
+    --warn-bg: rgba(243,156,18,0.1);
+    --err: #e74c3c;
+    --err-bg: rgba(231,76,60,0.1);
+    --border: rgba(46,204,113,0.15);
+    --radius: 12px;
+    --font: 'IBM Plex Sans', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-border);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .logo-text { line-height: 1.2; }
+  .logo-title { font-size: 14px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
+  .logo-sub { font-size: 10px; color: var(--text2); font-family: var(--mono); }
+
+  .lang-btn {
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: var(--accent);
+    font-size: 12px;
+    font-family: var(--mono);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .lang-btn:hover { background: rgba(46,204,113,0.2); }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: var(--mono);
+  }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-icon { font-size: 16px; display: block; margin-bottom: 3px; }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
+
+  /* ── CHAT PAGE ── */
+  #page-chat { display: none; flex-direction: column; height: 100%; padding: 0; }
+  #page-chat.active { display: flex; }
+
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .msg {
+    max-width: 88%;
+    animation: msgIn 0.25s ease;
+  }
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg-user { align-self: flex-end; }
+  .msg-bot  { align-self: flex-start; }
+
+  .msg-bubble {
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .msg-user .msg-bubble {
+    background: var(--accent2);
+    color: #fff;
+    border-radius: 14px 14px 4px 14px;
+  }
+  .msg-bot .msg-bubble {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 4px 14px 14px 14px;
+  }
+  .msg-time {
+    font-size: 10px;
+    color: var(--text2);
+    margin-top: 4px;
+    font-family: var(--mono);
+    padding: 0 4px;
+  }
+  .msg-user .msg-time { text-align: right; }
+
+  .typing {
+    display: flex;
+    gap: 4px;
+    padding: 12px 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px 14px 14px 14px;
+    width: fit-content;
+  }
+  .typing span {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  .chat-input-area {
+    padding: 12px 16px;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 10px 16px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--font);
+    resize: none;
+    max-height: 120px;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.4;
+  }
+  .chat-input:focus { border-color: var(--accent-border); }
+  .chat-input::placeholder { color: var(--text2); opacity: 0.6; }
+
+  .send-btn {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--accent2);
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.15s, background 0.2s;
+  }
+  .send-btn:active { transform: scale(0.92); }
+  .send-btn:disabled { background: var(--bg3); opacity: 0.5; }
+
+  /* ── PDF PAGE ── */
+  .upload-zone {
+    border: 2px dashed var(--accent-border);
+    border-radius: var(--radius);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .upload-zone.drag { border-color: var(--accent); background: var(--accent-dim); }
+  .upload-icon { font-size: 40px; margin-bottom: 12px; }
+  .upload-title { font-size: 15px; font-weight: 500; color: var(--accent); margin-bottom: 6px; }
+  .upload-sub { font-size: 12px; color: var(--text2); }
+  #file-input { display: none; }
+
+  .file-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .file-icon { font-size: 28px; }
+  .file-info { flex: 1; min-width: 0; }
+  .file-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file-size { font-size: 11px; color: var(--text2); font-family: var(--mono); margin-top: 2px; }
+
+  /* ── INN PAGE ── */
+  .field-group { margin-bottom: 16px; }
+  .field-label { font-size: 12px; color: var(--text2); font-family: var(--mono); margin-bottom: 6px; display: block; }
+  .field-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: var(--mono);
+    outline: none;
+    transition: border-color 0.2s;
+    letter-spacing: 0.05em;
+  }
+  .field-input:focus { border-color: var(--accent-border); }
+  .field-input::placeholder { color: var(--text2); opacity: 0.5; letter-spacing: 0; font-family: var(--font); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary { background: var(--accent2); color: #fff; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.5; }
+  .btn-secondary { background: var(--accent-dim); border: 1px solid var(--accent-border); color: var(--accent); }
+
+  /* ── RESULT CARD ── */
+  .result-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-top: 16px;
+    animation: msgIn 0.3s ease;
+  }
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-title { font-size: 14px; font-weight: 600; color: var(--accent); }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(46,204,113,0.07);
+    font-size: 13px;
+    gap: 8px;
+  }
+  .result-row:last-child { border: none; }
+  .result-key { color: var(--text2); flex-shrink: 0; }
+  .result-val { color: var(--text); text-align: right; font-weight: 500; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: var(--mono);
+  }
+  .badge-ok  { background: rgba(46,204,113,0.15); color: #2ecc71; }
+  .badge-warn{ background: var(--warn-bg); color: var(--warn); }
+  .badge-err { background: var(--err-bg); color: var(--err); }
+
+  /* ── SETTINGS PAGE ── */
+  .settings-section { margin-bottom: 24px; }
+  .settings-title { font-size: 11px; font-family: var(--mono); color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .settings-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .settings-row:last-child { border: none; }
+  .settings-row-label { color: var(--text); }
+  .settings-row-val { color: var(--text2); font-family: var(--mono); font-size: 12px; }
+  .api-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    outline: none;
+    margin-top: 8px;
+  }
+
+  /* ── LANG MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: flex-end;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    padding: 20px 16px 32px;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .modal-title { font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 16px; text-align: center; font-family: var(--mono); }
+  .lang-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 6px;
+  }
+  .lang-option:hover, .lang-option.selected { background: var(--accent-dim); }
+  .lang-flag { font-size: 24px; }
+  .lang-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .lang-code { font-size: 11px; color: var(--text2); font-family: var(--mono); }
+  .lang-check { margin-left: auto; color: var(--accent); font-size: 18px; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text2);
+    font-family: var(--mono);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 50;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ── STATUS indicator ── */
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+    display: inline-block;
+    margin-right: 4px;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">⚖️</div>
+    <div class="logo-text">
+      <div class="logo-title" id="app-title">PENSIYA AUDIT</div>
+      <div class="logo-sub"><span class="status-dot"></span><span id="app-sub">AI Auditor Tizimi</span></div>
+    </div>
+  </div>
+  <button class="lang-btn" onclick="openLang()" id="lang-display">UZ</button>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('chat')" id="tab-chat">
+    <span class="tab-icon">💬</span>
+    <span id="tab-chat-label">Chat</span>
+  </div>
+  <div class="tab" onclick="switchTab('pdf')" id="tab-pdf">
+    <span class="tab-icon">📄</span>
+    <span id="tab-pdf-label">PDF</span>
+  </div>
+  <div class="tab" onclick="switchTab('inn')" id="tab-inn">
+    <span class="tab-icon">🔍</span>
+    <span id="tab-inn-label">INN</span>
+  </div>
+  <div class="tab" onclick="switchTab('settings')" id="tab-settings">
+    <span class="tab-icon">⚙️</span>
+    <span id="tab-settings-label">Sozlama</span>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- CHAT PAGE -->
+  <div id="page-chat" class="page active">
+    <div class="messages" id="messages">
+      <div class="msg msg-bot">
+        <div class="msg-bubble" id="welcome-msg">Salom! Men pensiya auditor assistentman.
+📄 PDF hujjat yuboring → to'liq tahlil
+🔍 INN kiriting → ma'lumot oling
+❓ Savol bering → javob beraman</div>
+        <div class="msg-time" id="welcome-time"></div>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <textarea class="chat-input" id="chat-input" rows="1"
+        placeholder="Savol yozing..."
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <!-- PDF PAGE -->
+  <div id="page-pdf" class="page">
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()"
+         ondragover="event.preventDefault();this.classList.add('drag')"
+         ondragleave="this.classList.remove('drag')"
+         ondrop="handleDrop(event)">
+      <div class="upload-icon">📂</div>
+      <div class="upload-title" id="upload-title">Fayl yuklang</div>
+      <div class="upload-sub" id="upload-sub">PDF, DOC, DOCX, TXT · Bosing yoki tashlang</div>
+    </div>
+    <input type="file" id="file-input" accept=".pdf,.doc,.docx,.txt" onchange="handleFile(this.files[0])">
+
+    <div id="file-preview" style="display:none;">
+      <div class="file-card">
+        <div class="file-icon">📄</div>
+        <div class="file-info">
+          <div class="file-name" id="file-name"></div>
+          <div class="file-size" id="file-size"></div>
+        </div>
+        <button onclick="clearFile()" style="background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;">✕</button>
+      </div>
+      <button class="btn btn-primary" id="analyze-btn" onclick="analyzeFile()">
+        <span>🔬</span> <span id="analyze-label">Tahlil qilish</span>
+      </button>
+    </div>
+
+    <div id="pdf-result"></div>
+  </div>
+
+  <!-- INN PAGE -->
+  <div id="page-inn" class="page">
+    <div class="field-group">
+      <label class="field-label" id="inn-label">INN / Pasport raqami</label>
+      <input class="field-input" id="inn-input" type="text" placeholder="1234567890" maxlength="14" inputmode="numeric">
+    </div>
+    <div class="field-group">
+      <label class="field-label" id="fio-label">F.I.O. (ixtiyoriy)</label>
+      <input class="field-input" id="fio-input" type="text" placeholder="Familiya Ism Otasining ismi">
+    </div>
+    <button class="btn btn-primary" onclick="searchINN()" id="search-btn">
+      <span>🔍</span> <span id="search-label">Qidirish va tahlil</span>
+    </button>
+    <div id="inn-result"></div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div id="page-settings" class="page">
+    <div class="settings-section">
+      <div class="settings-title" id="settings-api-title">API Sozlamalari</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label">Anthropic API Key</div>
+            <input class="api-input" type="password" id="api-key-input"
+              placeholder="sk-ant-..." onchange="saveApiKey(this.value)">
+          </div>
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label" id="settings-model-label">Model</span>
+          <span class="settings-row-val">claude-sonnet-4-6</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label" id="settings-status-label">Holat</span>
+          <span class="settings-row-val" id="api-status">⚠️ Sozlanmagan</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title" id="settings-server-title">Server Sozlamalari</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label" id="settings-server-label">Lokal server manzili</div>
+            <input class="api-input" type="text" id="server-url-input"
+              placeholder="http://192.168.1.100:8000" onchange="saveServerUrl(this.value)">
+          </div>
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label" id="settings-server-status-label">Server holati</span>
+          <span class="settings-row-val" id="server-status">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title" id="settings-about-title">Ilova haqida</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <span class="settings-row-label">Versiya</span>
+          <span class="settings-row-val">v1.0.0</span>
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label" id="settings-lang-label">Til</span>
+          <span class="settings-row-val" id="current-lang-display">O'zbek (lotin)</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-secondary" onclick="testApi()" style="margin-bottom:10px;">
+      <span>🔌</span> <span id="test-btn-label">API ni tekshirish</span>
+    </button>
+    <button class="btn btn-secondary" onclick="checkServer()">
+      <span>📡</span> <span id="server-btn-label">Serverni tekshirish</span>
+    </button>
+  </div>
+
+</div><!-- /main -->
+
+<!-- LANGUAGE MODAL -->
+<div class="modal-overlay" id="lang-modal" onclick="if(event.target===this)closeLang()">
+  <div class="modal">
+    <div class="modal-title">🌐 Til / Language / Язык</div>
+    <div class="lang-option selected" onclick="setLang('uz')" id="lang-uz">
+      <span class="lang-flag">🇺🇿</span>
+      <div><div class="lang-name">O'zbek (lotin)</div><div class="lang-code">UZ</div></div>
+      <span class="lang-check" id="check-uz">✓</span>
+    </div>
+    <div class="lang-option" onclick="setLang('kr')" id="lang-kr">
+      <span class="lang-flag">🇺🇿</span>
+      <div><div class="lang-name">Ўзбек (кирилл)</div><div class="lang-code">КР</div></div>
+      <span class="lang-check" id="check-kr" style="display:none">✓</span>
+    </div>
+    <div class="lang-option" onclick="setLang('ru')" id="lang-ru">
+      <span class="lang-flag">🇷🇺</span>
+      <div><div class="lang-name">Русский</div><div class="lang-code">RU</div></div>
+      <span class="lang-check" id="check-ru" style="display:none">✓</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let currentLang = localStorage.getItem('lang') || 'uz';
+let apiKey = localStorage.getItem('apiKey') || '';
+let serverUrl = localStorage.getItem('serverUrl') || '';
+let selectedFile = null;
+let chatHistory = [];
+let isTyping = false;
+
+// ── TRANSLATIONS ──
+const T = {
+  uz: {
+    appTitle: 'PENSIYA AUDIT', appSub: 'AI Auditor Tizimi',
+    tabChat: 'Chat', tabPdf: 'PDF', tabInn: 'INN', tabSettings: 'Sozlama',
+    welcome: `Salom! Men pensiya auditor assistentman.\n📄 PDF hujjat yuboring → to'liq tahlil\n🔍 INN kiriting → ma'lumot oling\n❓ Savol bering → javob beraman`,
+    uploadTitle: 'Fayl yuklang', uploadSub: 'PDF, DOC, DOCX, TXT · Bosing yoki tashlang',
+    analyzeLabel: 'Tahlil qilish', innLabel: 'INN / Pasport raqami',
+    fioLabel: "F.I.O. (ixtiyoriy)", searchLabel: 'Qidirish va tahlil',
+    chatPlaceholder: 'Savol yozing...',
+    apiTitle: 'API Sozlamalari', serverTitle: 'Server Sozlamalari',
+    aboutTitle: 'Ilova haqida', modelLabel: 'Model', statusLabel: 'Holat',
+    serverLabel: 'Lokal server manzili', serverStatusLabel: 'Server holati',
+    langLabel: 'Til', langDisplay: "O'zbek (lotin)",
+    testBtn: 'API ni tekshirish', serverBtn: 'Serverni tekshirish',
+    noKey: '⚠️ API key kiritilmagan', analyzing: '⏳ Tahlil qilinmoqda...',
+    noFile: 'Fayl tanlanmagan', apiOk: '✅ Ulandi', apiErr: '❌ Xato',
+    serverOk: '✅ Ulandi', serverErr: '❌ Ulanmadi',
+    innEmpty: 'INN kiriting', searching: '⏳ Qidirilmoqda...',
+    resultTitle: 'Tahlil natijasi', copyOk: 'Nusxalandi!',
+    systemPrompt: `Sen O'zbekiston pensiya tizimi bo'yicha auditor assistentsan. Pensiya hujjatlarini, staj hisobini, ish haqi indekslashini, pensiya miqdorini tekshirasan. Xatolarni aniqlab, tavsiya berasan. Javob qisqa, aniq va O'zbek tilida bo'lsin.`
+  },
+  kr: {
+    appTitle: 'ПЕНСИЯ АУДИТ', appSub: 'AI Аудитор Тизими',
+    tabChat: 'Чат', tabPdf: 'ПДФ', tabInn: 'ИНН', tabSettings: 'Созлама',
+    welcome: `Салом! Мен пенсия аудитор ассистентман.\n📄 ПДФ ҳужжат юборинг → тўлиқ таҳлил\n🔍 ИНН киритинг → маълумот олинг\n❓ Савол беринг → жавоб берилади`,
+    uploadTitle: 'Файл юкланг', uploadSub: 'PDF, DOC, DOCX, TXT · Босинг ёки ташланг',
+    analyzeLabel: 'Таҳлил қилиш', innLabel: 'ИНН / Паспорт рақами',
+    fioLabel: "Ф.И.О. (ихтиёрий)", searchLabel: 'Қидириш ва таҳлил',
+    chatPlaceholder: 'Савол ёзинг...',
+    apiTitle: 'API Созламалари', serverTitle: 'Сервер Созламалари',
+    aboutTitle: 'Илова ҳақида', modelLabel: 'Модел', statusLabel: 'Ҳолат',
+    serverLabel: 'Локал сервер манзили', serverStatusLabel: 'Сервер ҳолати',
+    langLabel: 'Тил', langDisplay: 'Ўзбек (кирилл)',
+    testBtn: 'API ни текшириш', serverBtn: 'Серверни текшириш',
+    noKey: '⚠️ API калит киритилмаган', analyzing: '⏳ Таҳлил қилинмоқда...',
+    noFile: 'Файл танланмаган', apiOk: '✅ Уланди', apiErr: '❌ Хато',
+    serverOk: '✅ Уланди', serverErr: '❌ Уланмади',
+    innEmpty: 'ИНН киритинг', searching: '⏳ Қидирилмоқда...',
+    resultTitle: 'Таҳлил натижаси', copyOk: 'Нусхаланди!',
+    systemPrompt: `Сен Ўзбекистон пенсия тизими бўйича аудитор ассистентсан. Пенсия ҳужжатларини, стаж ҳисобини, иш ҳақи индекслашини, пенсия миқдорини текширасан. Хатоларни аниқлаб, тавсия берасан. Жавоб қисқа, аниқ ва Ўзбек тилида бўлсин.`
+  },
+  ru: {
+    appTitle: 'ПЕНСИЯ АУДИТ', appSub: 'ИИ Система Аудита',
+    tabChat: 'Чат', tabPdf: 'PDF', tabInn: 'ИНН', tabSettings: 'Настройки',
+    welcome: `Здравствуйте! Я ассистент-аудитор пенсионной системы.\n📄 Отправьте PDF документ → полный анализ\n🔍 Введите ИНН → получите данные\n❓ Задайте вопрос → получите ответ`,
+    uploadTitle: 'Загрузить файл', uploadSub: 'PDF, DOC, DOCX, TXT · Нажмите или перетащите',
+    analyzeLabel: 'Анализировать', innLabel: 'ИНН / Номер паспорта',
+    fioLabel: "Ф.И.О. (необязательно)", searchLabel: 'Найти и анализировать',
+    chatPlaceholder: 'Введите вопрос...',
+    apiTitle: 'Настройки API', serverTitle: 'Настройки сервера',
+    aboutTitle: 'О приложении', modelLabel: 'Модель', statusLabel: 'Статус',
+    serverLabel: 'Адрес локального сервера', serverStatusLabel: 'Статус сервера',
+    langLabel: 'Язык', langDisplay: 'Русский',
+    testBtn: 'Проверить API', serverBtn: 'Проверить сервер',
+    noKey: '⚠️ API ключ не введён', analyzing: '⏳ Анализируется...',
+    noFile: 'Файл не выбран', apiOk: '✅ Подключено', apiErr: '❌ Ошибка',
+    serverOk: '✅ Подключено', serverErr: '❌ Не подключён',
+    innEmpty: 'Введите ИНН', searching: '⏳ Поиск...',
+    resultTitle: 'Результат анализа', copyOk: 'Скопировано!',
+    systemPrompt: `Ты ассистент-аудитор пенсионной системы Узбекистана. Проверяешь пенсионные документы, стаж, индексацию зарплаты, размер пенсии. Выявляешь ошибки и даёшь рекомендации. Отвечай кратко, точно, на русском языке.`
+  }
+};
+
+// ── LANG ──
+function t(key) { return (T[currentLang] || T.uz)[key] || key; }
+
+function applyLang() {
+  const l = currentLang;
+  document.getElementById('app-title').textContent = t('appTitle');
+  document.getElementById('app-sub').textContent = t('appSub');
+  document.getElementById('tab-chat-label').textContent = t('tabChat');
+  document.getElementById('tab-pdf-label').textContent = t('tabPdf');
+  document.getElementById('tab-inn-label').textContent = t('tabInn');
+  document.getElementById('tab-settings-label').textContent = t('tabSettings');
+  document.getElementById('welcome-msg').textContent = t('welcome');
+  document.getElementById('upload-title').textContent = t('uploadTitle');
+  document.getElementById('upload-sub').textContent = t('uploadSub');
+  document.getElementById('analyze-label').textContent = t('analyzeLabel');
+  document.getElementById('inn-label').textContent = t('innLabel');
+  document.getElementById('fio-label').textContent = t('fioLabel');
+  document.getElementById('search-label').textContent = t('searchLabel');
+  document.getElementById('chat-input').placeholder = t('chatPlaceholder');
+  document.getElementById('settings-api-title').textContent = t('apiTitle');
+  document.getElementById('settings-server-title').textContent = t('serverTitle');
+  document.getElementById('settings-about-title').textContent = t('aboutTitle');
+  document.getElementById('settings-model-label').textContent = t('modelLabel');
+  document.getElementById('settings-status-label').textContent = t('statusLabel');
+  document.getElementById('settings-server-label').textContent = t('serverLabel');
+  document.getElementById('settings-server-status-label').textContent = t('serverStatusLabel');
+  document.getElementById('settings-lang-label').textContent = t('langLabel');
+  document.getElementById('current-lang-display').textContent = t('langDisplay');
+  document.getElementById('test-btn-label').textContent = t('testBtn');
+  document.getElementById('server-btn-label').textContent = t('serverBtn');
+  document.getElementById('lang-display').textContent = l.toUpperCase();
+  ['uz','kr','ru'].forEach(c => {
+    document.getElementById('check-'+c).style.display = c===l ? '' : 'none';
+    document.getElementById('lang-'+c).classList.toggle('selected', c===l);
+  });
+}
+
+function setLang(l) { currentLang = l; localStorage.setItem('lang', l); applyLang(); closeLang(); }
+function openLang() { document.getElementById('lang-modal').classList.add('open'); }
+function closeLang() { document.getElementById('lang-modal').classList.remove('open'); }
+
+// ── TABS ──
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('page-'+name).classList.add('active');
+}
+
+// ── TOAST ──
+function showToast(msg, dur=2000) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), dur);
+}
+
+// ── TIME ──
+function nowTime() {
+  return new Date().toLocaleTimeString('uz-UZ', {hour:'2-digit', minute:'2-digit'});
+}
+
+// ── CHAT ──
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function addMessage(text, role) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg msg-' + role;
+  div.innerHTML = `<div class="msg-bubble">${text.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>
+    <div class="msg-time">${nowTime()}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function addTyping() {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg msg-bot';
+  div.id = 'typing-indicator';
+  div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+async function sendMessage() {
+  if (isTyping) return;
+  const inp = document.getElementById('chat-input');
+  const text = inp.value.trim();
+  if (!text) return;
+
+  const key = localStorage.getItem('apiKey') || '';
+  if (!key) { showToast(t('noKey')); switchTab('settings'); return; }
+
+  addMessage(text, 'user');
+  chatHistory.push({ role: 'user', content: text });
+  inp.value = ''; inp.style.height = 'auto';
+
+  isTyping = true;
+  document.getElementById('send-btn').disabled = true;
+  addTyping();
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        system: t('systemPrompt'),
+        messages: chatHistory.slice(-10)
+      })
+    });
+    const data = await resp.json();
+    removeTyping();
+    const answer = data.content?.[0]?.text || '❌ Xato yuz berdi';
+    chatHistory.push({ role: 'assistant', content: answer });
+    addMessage(answer, 'bot');
+  } catch(e) {
+    removeTyping();
+    addMessage('❌ Ulanishda xato: ' + e.message, 'bot');
+  }
+
+  isTyping = false;
+  document.getElementById('send-btn').disabled = false;
+}
+
+// ── PDF ──
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-zone').classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f) handleFile(f);
+}
+
+function handleFile(file) {
+  if (!file) return;
+  selectedFile = file;
+  document.getElementById('file-name').textContent = file.name;
+  document.getElementById('file-size').textContent = (file.size/1024).toFixed(1) + ' KB';
+  document.getElementById('file-preview').style.display = 'block';
+  document.getElementById('pdf-result').innerHTML = '';
+}
+
+function clearFile() {
+  selectedFile = null;
+  document.getElementById('file-preview').style.display = 'none';
+  document.getElementById('file-input').value = '';
+  document.getElementById('pdf-result').innerHTML = '';
+}
+
+async function analyzeFile() {
+  if (!selectedFile) { showToast(t('noFile')); return; }
+  const key = localStorage.getItem('apiKey') || '';
+  if (!key) { showToast(t('noKey')); switchTab('settings'); return; }
+
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true;
+  document.getElementById('analyze-label').textContent = t('analyzing');
+  document.getElementById('pdf-result').innerHTML = '';
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      let content;
+      if (selectedFile.name.endsWith('.pdf')) {
+        const b64 = e.target.result.split(',')[1];
+        content = [
+          { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } },
+          { type: 'text', text: 'Ushbu pensiya hujjatini to\'liq tahlil qil. Staj, ish haqi, pensiya miqdori, xatolar va tavsiyalarni batafsil yoz.' }
+        ];
+      } else {
+        const text = e.target.result;
+        content = `Quyidagi pensiya hujjatini to'liq tahlil qil:\n\n${text.slice(0, 8000)}`;
+      }
+
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 2000,
+          system: t('systemPrompt'),
+          messages: [{ role: 'user', content }]
+        })
+      });
+
+      const data = await resp.json();
+      const answer = data.content?.[0]?.text || '❌ Xato';
+      showResult('pdf-result', answer);
+    } catch(err) {
+      document.getElementById('pdf-result').innerHTML =
+        `<div class="result-card"><div style="color:var(--err)">❌ ${err.message}</div></div>`;
+    }
+
+    btn.disabled = false;
+    document.getElementById('analyze-label').textContent = t('analyzeLabel');
+  };
+
+  if (selectedFile.name.endsWith('.pdf')) reader.readAsDataURL(selectedFile);
+  else reader.readAsText(selectedFile, 'utf-8');
+}
+
+// ── INN SEARCH ──
+async function searchINN() {
+  const inn = document.getElementById('inn-input').value.trim();
+  const fio = document.getElementById('fio-input').value.trim();
+  if (!inn) { showToast(t('innEmpty')); return; }
+
+  const key = localStorage.getItem('apiKey') || '';
+  if (!key) { showToast(t('noKey')); switchTab('settings'); return; }
+
+  const srv = localStorage.getItem('serverUrl') || '';
+  const btn = document.getElementById('search-btn');
+  btn.disabled = true;
+  document.getElementById('search-label').textContent = t('searching');
+  document.getElementById('inn-result').innerHTML = '';
+
+  let pensionData = '';
+
+  // Avval lokal serverdan ma'lumot olishga harakat
+  if (srv) {
+    try {
+      const r = await fetch(`${srv}/pensioner?inn=${inn}`, { signal: AbortSignal.timeout(5000) });
+      if (r.ok) {
+        const d = await r.json();
+        pensionData = '\n\nPensiya tizimidan olingan ma\'lumotlar:\n' + JSON.stringify(d, null, 2);
+      }
+    } catch(e) {
+      pensionData = '\n\n(Lokal serverdan ma\'lumot olinmadi — server ulangan emas)';
+    }
+  }
+
+  const prompt = `INN: ${inn}${fio ? '\nF.I.O.: ' + fio : ''}${pensionData}\n\nBu fuqaroning pensiya ma'lumotlarini tahlil qil. Agar ma'lumot bo'lmasa, INN bo'yicha qanday ma'lumot topish mumkinligini ko'rsat.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        system: t('systemPrompt'),
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await resp.json();
+    const answer = data.content?.[0]?.text || '❌ Xato';
+    showResult('inn-result', answer);
+  } catch(e) {
+    document.getElementById('inn-result').innerHTML =
+      `<div class="result-card"><div style="color:var(--err)">❌ ${e.message}</div></div>`;
+  }
+
+  btn.disabled = false;
+  document.getElementById('search-label').textContent = t('searchLabel');
+}
+
+// ── SHOW RESULT ──
+function showResult(containerId, text) {
+  const html = `
+    <div class="result-card">
+      <div class="result-header">
+        <span>📋</span>
+        <span class="result-title">${t('resultTitle')}</span>
+        <button onclick="copyText(\`${text.replace(/`/g,"'")}\`)"
+          style="margin-left:auto;background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;">📋</button>
+      </div>
+      <div style="font-size:13px;line-height:1.7;color:var(--text);white-space:pre-wrap;">${text.replace(/</g,'&lt;')}</div>
+    </div>`;
+  document.getElementById(containerId).innerHTML = html;
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showToast(t('copyOk')));
+}
+
+// ── SETTINGS ──
+function saveApiKey(val) {
+  localStorage.setItem('apiKey', val);
+  document.getElementById('api-status').textContent = val ? '✅ Kiritilgan' : '⚠️ Sozlanmagan';
+}
+
+function saveServerUrl(val) {
+  localStorage.setItem('serverUrl', val);
+}
+
+async function testApi() {
+  const key = localStorage.getItem('apiKey') || '';
+  if (!key) { showToast(t('noKey')); return; }
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 10,
+        messages: [{ role: 'user', content: 'hi' }]
+      })
+    });
+    const ok = r.ok;
+    document.getElementById('api-status').textContent = ok ? t('apiOk') : t('apiErr');
+    showToast(ok ? t('apiOk') : t('apiErr'));
+  } catch(e) {
+    document.getElementById('api-status').textContent = t('apiErr');
+    showToast(t('apiErr'));
+  }
+}
+
+async function checkServer() {
+  const srv = localStorage.getItem('serverUrl') || '';
+  if (!srv) { showToast('Server manzili kiritilmagan'); return; }
+  try {
+    const r = await fetch(`${srv}/ping`, { signal: AbortSignal.timeout(3000) });
+    const ok = r.ok;
+    document.getElementById('server-status').textContent = ok ? t('serverOk') : t('serverErr');
+    showToast(ok ? t('serverOk') : t('serverErr'));
+  } catch(e) {
+    document.getElementById('server-status').textContent = t('serverErr');
+    showToast(t('serverErr'));
+  }
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  applyLang();
+  document.getElementById('welcome-time').textContent = nowTime();
+
+  const savedKey = localStorage.getItem('apiKey') || '';
+  const savedUrl = localStorage.getItem('serverUrl') || '';
+  if (savedKey) {
+    document.getElementById('api-key-input').value = savedKey;
+    document.getElementById('api-status').textContent = '✅ Kiritilgan';
+  }
+  if (savedUrl) document.getElementById('server-url-input').value = savedUrl;
+});
+</script>
+</body>
+</html>
