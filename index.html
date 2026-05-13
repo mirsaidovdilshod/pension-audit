@@ -696,15 +696,40 @@ const SYS = `Сен Ўзбекистон Республикаси пенсия �
 Ўзбек кирилл алифбосида жавоб бер. Аниқ ва қисқа.`;
 
 // ═══════════════════════════════════════════
+// STANDART SOZLAMALAR — o'zgartirishingiz mumkin
+// ═══════════════════════════════════════════
+const CONFIG = {
+  // Anthropic API key — console.anthropic.com dan oling
+  apiKey: '',
+
+  // Ko'prik server manzili — pension_bridge.py ishlab turgan kompyuter IP
+  // Agar telefon va kompyuter bir xil Wi-Fi da bo'lsa: http://172.28.53.153:5000
+  // Agar faqat o'sha kompyuterda ishlatilsa: http://localhost:5000
+  pfmfUrl: 'http://172.28.53.153:5000',
+
+  // Qo'shimcha API manzillar (keyinchalik)
+  yammtUrl: '',
+  inpsUrl: '',
+  taxUrl: '',
+};
+
+// ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
 let chatHistory = [], isTyping = false, aFile = null;
 
-function gs(k){ return localStorage.getItem(k)||'' }
+// localStorage dan olinadi, bo'lmasa CONFIG default ishlatiladi
+function gs(k){
+  const saved = localStorage.getItem(k);
+  if(saved !== null && saved !== '') return saved;
+  return CONFIG[k] || '';
+}
+
 function saveSet(){
-  ['s-api','s-pfmf','s-yammt','s-inps','s-tax'].forEach(id=>{
-    const map={'s-api':'apiKey','s-pfmf':'pfmfUrl','s-yammt':'yammtUrl','s-inps':'inpsUrl','s-tax':'taxUrl'};
-    localStorage.setItem(map[id], document.getElementById(id).value);
+  const map={'s-api':'apiKey','s-pfmf':'pfmfUrl','s-yammt':'yammtUrl','s-inps':'inpsUrl','s-tax':'taxUrl'};
+  Object.entries(map).forEach(([id, key])=>{
+    const el = document.getElementById(id);
+    if(el) localStorage.setItem(key, el.value);
   });
 }
 
@@ -1112,9 +1137,29 @@ function showToast(m,d=2500){
   setTimeout(()=>el.classList.remove('show'),d);
 }
 
+// ═══════════════════════════════════════════
 // INIT
-document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('wt').textContent=nowTime();
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async ()=>{
+  document.getElementById('wt').textContent = nowTime();
+
+  // Sozlamalar inputlarini to'ldirish
+  document.getElementById('s-api').value   = gs('apiKey');
+  document.getElementById('s-pfmf').value  = gs('pfmfUrl');
+  document.getElementById('s-yammt').value = gs('yammtUrl');
+  document.getElementById('s-inps').value  = gs('inpsUrl');
+  document.getElementById('s-tax').value   = gs('taxUrl');
+
+  // Server ulanganligini tekshirish
+  const url = gs('pfmfUrl');
+  if(url){
+    try{
+      const r = await fetch(url+'/ping', {signal: AbortSignal.timeout(4000)});
+      if(r.ok) showToast('✅ Сервер уланди!', 3000);
+    } catch(e){
+      showToast('⚠️ Сервер топилмади — pension_bridge.py ишга туширинг', 4000);
+    }
+  }
 });
 </script>
 </body>
