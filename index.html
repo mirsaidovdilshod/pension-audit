@@ -2,1105 +2,1119 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#0a3d2e">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#1A237E">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Pensiya Audit">
-<title>Pensiya Auditor</title>
-<link rel="manifest" href="#" id="manifest-link">
+<meta name="apple-mobile-web-app-title" content="Пенсия AI">
+<title>Пенсия AI Ассистент</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --p:#1A237E;--pl:#283593;--pd:#0D1657;
+  --a:#3F51B5;--al:#5C6BC0;--as:#E8EAF6;
+  --bg:#F5F6FF;--bg2:#EEF0FF;--card:#FFFFFF;
+  --t:#1A237E;--t2:#3949AB;--t3:#5C6BC0;--tm:#7986CB;
+  --b:#C5CAE9;--b2:#9FA8DA;
+  --ok:#2E7D32;--ok-b:#E8F5E9;
+  --w:#E65100;--w-b:#FFF3E0;
+  --e:#B71C1C;--e-b:#FFEBEE;
+  --sh:0 2px 12px rgba(26,35,126,.10);
+  --sh2:0 6px 24px rgba(26,35,126,.15);
+  --r:14px;--r2:10px;--r3:8px;
+  --fn:'Nunito',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--t);font-family:var(--fn);font-size:15px;display:flex;flex-direction:column}
 
-  :root {
-    --bg: #0a1a14;
-    --bg2: #0f2318;
-    --bg3: #142d1f;
-    --accent: #2ecc71;
-    --accent2: #27ae60;
-    --accent-dim: rgba(46,204,113,0.12);
-    --accent-border: rgba(46,204,113,0.3);
-    --text: #e8f5e9;
-    --text2: #81c784;
-    --text3: #4caf50;
-    --warn: #f39c12;
-    --warn-bg: rgba(243,156,18,0.1);
-    --err: #e74c3c;
-    --err-bg: rgba(231,76,60,0.1);
-    --border: rgba(46,204,113,0.15);
-    --radius: 12px;
-    --font: 'IBM Plex Sans', sans-serif;
-    --mono: 'IBM Plex Mono', monospace;
-  }
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,var(--pd) 0%,var(--pl) 100%);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 3px 12px rgba(13,22,87,.35)}
+.hdr-l{display:flex;align-items:center;gap:10px}
+.hdr-ico{width:40px;height:40px;background:rgba(255,255,255,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.hdr-title{color:#fff;font-size:15px;font-weight:800;letter-spacing:.02em}
+.hdr-sub{color:rgba(255,255,255,.72);font-size:10px;margin-top:1px}
+.hdr-btn{width:38px;height:38px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:10px;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+.hdr-btn:hover{background:rgba(255,255,255,.25)}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+/* ── TABS ── */
+.tabs{background:var(--card);border-bottom:2px solid var(--b);display:flex;overflow-x:auto;scrollbar-width:none;flex-shrink:0;box-shadow:var(--sh)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:70px;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--tm);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap}
+.tab.active{color:var(--p);border-bottom-color:var(--p)}
+.tab-ico{font-size:18px}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
+/* ── SCROLL AREA ── */
+.main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.page{display:none;padding:14px;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-  /* ── HEADER ── */
-  .header {
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 10;
-  }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .logo-icon {
-    width: 36px; height: 36px;
-    background: var(--accent-dim);
-    border: 1px solid var(--accent-border);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-  }
-  .logo-text { line-height: 1.2; }
-  .logo-title { font-size: 14px; font-weight: 600; color: var(--accent); letter-spacing: 0.02em; }
-  .logo-sub { font-size: 10px; color: var(--text2); font-family: var(--mono); }
+/* ── CHAT ── */
+#page-chat{display:none;flex-direction:column;height:calc(100dvh - 118px);padding:0}
+#page-chat.active{display:flex}
+.msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:87%;animation:fadeIn .22s ease}
+.msg-u{align-self:flex-end}
+.msg-b{align-self:flex-start}
+.bbl{padding:10px 13px;border-radius:16px;font-size:13.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.msg-u .bbl{background:var(--a);color:#fff;border-radius:16px 16px 4px 16px}
+.msg-b .bbl{background:var(--card);border:1px solid var(--b);color:var(--t);border-radius:4px 16px 16px 16px;box-shadow:var(--sh)}
+.msg-t{font-size:10px;color:var(--tm);margin-top:3px;padding:0 4px}
+.msg-u .msg-t{text-align:right}
+.typing{display:flex;gap:4px;padding:11px 13px;background:var(--card);border:1px solid var(--b);border-radius:4px 16px 16px 16px;width:fit-content;box-shadow:var(--sh)}
+.typing span{width:7px;height:7px;background:var(--al);border-radius:50%;animation:bns 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bns{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+.chat-bar{padding:10px 13px 14px;background:var(--card);border-top:1px solid var(--b);display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+.chat-inp{flex:1;background:var(--bg);border:1.5px solid var(--b);border-radius:20px;padding:9px 15px;color:var(--t);font-size:13.5px;font-family:var(--fn);resize:none;max-height:90px;outline:none;transition:border-color .2s;line-height:1.4}
+.chat-inp:focus{border-color:var(--al)}
+.chat-inp::placeholder{color:var(--tm)}
+.send-btn{width:40px;height:40px;border-radius:50%;background:var(--a);border:none;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s;box-shadow:0 2px 8px rgba(63,81,181,.35)}
+.send-btn:active{transform:scale(.9)}
+.send-btn:disabled{background:var(--b);box-shadow:none}
 
-  .lang-btn {
-    background: var(--accent-dim);
-    border: 1px solid var(--accent-border);
-    border-radius: 8px;
-    padding: 6px 12px;
-    color: var(--accent);
-    font-size: 12px;
-    font-family: var(--mono);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .lang-btn:hover { background: rgba(46,204,113,0.2); }
+/* ── CARDS ── */
+.sec-ttl{font-size:11px;font-weight:800;color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;padding-left:2px}
+.card{background:var(--card);border-radius:var(--r);padding:15px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--b)}
+.card-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1.5px solid var(--bg2)}
+.card-ico{font-size:20px;width:38px;height:38px;background:var(--as);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-ttl{font-size:14px;font-weight:700;color:var(--t)}
+.card-sub{font-size:11px;color:var(--tm);margin-top:1px}
+.row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--bg2);gap:8px}
+.row:last-child{border:none;padding-bottom:0}
+.rk{font-size:12px;color:var(--tm);font-weight:500;flex-shrink:0;max-width:50%}
+.rv{font-size:13px;color:var(--t);font-weight:700;text-align:right}
+.bdg{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.bdg-ok{background:var(--ok-b);color:var(--ok)}
+.bdg-w{background:var(--w-b);color:var(--w)}
+.bdg-e{background:var(--e-b);color:var(--e)}
+.bdg-b{background:var(--as);color:var(--p)}
 
-  /* ── TABS ── */
-  .tabs {
-    display: flex;
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .tabs::-webkit-scrollbar { display: none; }
-  .tab {
-    flex: 1;
-    min-width: 80px;
-    padding: 10px 8px;
-    text-align: center;
-    font-size: 11px;
-    color: var(--text2);
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    white-space: nowrap;
-    font-family: var(--mono);
-  }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab-icon { font-size: 16px; display: block; margin-bottom: 3px; }
+/* ── PINFL ── */
+.pinfl-wrap{background:linear-gradient(135deg,var(--as),#fff);border:1.5px solid var(--b2);border-radius:var(--r);padding:20px 16px;margin-bottom:14px;text-align:center}
+.pinfl-ico{font-size:40px;margin-bottom:10px}
+.pinfl-ttl{font-size:16px;font-weight:800;color:var(--p);margin-bottom:5px}
+.pinfl-sub{font-size:12px;color:var(--tm);margin-bottom:16px;line-height:1.5}
+.pinfl-row{display:flex;gap:8px}
+.pinfl-inp{flex:1;background:#fff;border:2px solid var(--b);border-radius:var(--r2);padding:13px 14px;color:var(--t);font-size:18px;font-weight:700;outline:none;letter-spacing:.1em;text-align:center;transition:border-color .2s}
+.pinfl-inp:focus{border-color:var(--a)}
+.pinfl-inp::placeholder{letter-spacing:0;font-size:13px;font-weight:400;color:var(--tm)}
 
-  /* ── MAIN ── */
-  .main {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-  }
+/* ── BUTTONS ── */
+.btn{border:none;border-radius:var(--r2);padding:12px 18px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;font-family:var(--fn);display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.btn-p{background:var(--a);color:#fff;box-shadow:0 2px 10px rgba(63,81,181,.3)}
+.btn-p:active{transform:scale(.97)}
+.btn-p:disabled{opacity:.5}
+.btn-bl{width:100%;margin-top:10px}
+.btn-o{background:transparent;border:1.5px solid var(--a);color:var(--a)}
 
-  .page { display: none; padding: 16px; }
-  .page.active { display: block; }
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,var(--pd),var(--pl));border-radius:var(--r);padding:18px 15px;margin-bottom:12px;color:#fff;box-shadow:var(--sh2)}
+.hero-av{width:52px;height:52px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:10px}
+.hero-name{font-size:17px;font-weight:800;margin-bottom:3px}
+.hero-pinfl{font-size:11px;opacity:.75;margin-bottom:10px;font-family:monospace;letter-spacing:.05em}
+.hero-tags{display:flex;gap:7px;flex-wrap:wrap}
+.hero-tag{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:700}
 
-  /* ── CHAT PAGE ── */
-  #page-chat { display: none; flex-direction: column; height: 100%; padding: 0; }
-  #page-chat.active { display: flex; }
+/* ── PENSION AMOUNT ── */
+.pen-sum{background:linear-gradient(135deg,#E8F5E9,#F1F8E9);border:2px solid #A5D6A7;border-radius:var(--r);padding:16px;margin-bottom:12px;text-align:center}
+.pen-lbl{font-size:11px;color:var(--tm);font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px}
+.pen-val{font-size:28px;font-weight:800;color:#1B5E20}
+.pen-sub{font-size:12px;color:var(--tm);margin-top:5px;line-height:1.5}
+.pen-cur{font-size:15px;font-weight:700;color:#2E7D32;margin-top:3px}
 
-  .messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    -webkit-overflow-scrolling: touch;
-  }
+/* ── STAJ ── */
+.staj-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--bg2);align-items:flex-start}
+.staj-item:last-child{border:none}
+.staj-n{width:24px;height:24px;background:var(--as);color:var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.staj-info{flex:1}
+.staj-per{font-size:12px;font-weight:700;color:var(--t)}
+.staj-type{font-size:11px;color:var(--tm);margin-top:2px}
+.staj-dur{font-size:12px;font-weight:800;color:var(--a);white-space:nowrap;flex-shrink:0}
 
-  .msg {
-    max-width: 88%;
-    animation: msgIn 0.25s ease;
-  }
-  @keyframes msgIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:var(--r3);border:1px solid var(--b);margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--as);color:var(--p);font-weight:700;padding:7px 9px;text-align:left;font-size:11px;white-space:nowrap}
+td{padding:6px 9px;border-bottom:1px solid var(--bg2);color:var(--t)}
+tr:last-child td{border:none}
+tr:hover td{background:var(--bg)}
+.num-r{text-align:right;font-family:monospace}
+tfoot td{font-weight:800;background:var(--as);color:var(--p)}
 
-  .msg-user { align-self: flex-end; }
-  .msg-bot  { align-self: flex-start; }
+/* ── INDEKS TABLE ── */
+.idx-tbl{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:8px}
+.idx-tbl th{background:var(--as);color:var(--p);font-weight:700;padding:6px 7px;font-size:10px;text-align:center;white-space:nowrap}
+.idx-tbl td{padding:5px 7px;border-bottom:1px solid var(--bg2);color:var(--t);text-align:center}
+.idx-tbl tr:last-child td{border:none}
+.idx-tbl .yr-row td{background:#EDE7F6;font-weight:700;color:#4527A0}
+.idx-tbl .tot-row td{background:var(--as);font-weight:800;color:var(--p)}
 
-  .msg-bubble {
-    padding: 10px 14px;
-    border-radius: 14px;
-    font-size: 14px;
-    line-height: 1.55;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-  .msg-user .msg-bubble {
-    background: var(--accent2);
-    color: #fff;
-    border-radius: 14px 14px 4px 14px;
-  }
-  .msg-bot .msg-bubble {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text);
-    border-radius: 4px 14px 14px 14px;
-  }
-  .msg-time {
-    font-size: 10px;
-    color: var(--text2);
-    margin-top: 4px;
-    font-family: var(--mono);
-    padding: 0 4px;
-  }
-  .msg-user .msg-time { text-align: right; }
+/* ── QAROR ── */
+.qaror-box{background:linear-gradient(135deg,#FFF8E1,#FFFDE7);border:2px solid #FFD54F;border-radius:var(--r);padding:16px;margin-bottom:12px}
+.qaror-num{font-size:11px;color:#E65100;font-weight:700;letter-spacing:.05em;margin-bottom:5px}
+.qaror-ttl{font-size:16px;font-weight:800;color:#E65100;margin-bottom:8px}
+.qaror-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,180,0,.2);font-size:13px}
+.qaror-row:last-child{border:none}
+.qaror-k{color:#795548;font-weight:500}
+.qaror-v{color:#3E2723;font-weight:700;text-align:right}
 
-  .typing {
-    display: flex;
-    gap: 4px;
-    padding: 12px 14px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 4px 14px 14px 14px;
-    width: fit-content;
-  }
-  .typing span {
-    width: 6px; height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
-    animation: bounce 1.2s infinite;
-  }
-  .typing span:nth-child(2) { animation-delay: 0.2s; }
-  .typing span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes bounce {
-    0%,60%,100% { transform: translateY(0); opacity: 0.4; }
-    30% { transform: translateY(-6px); opacity: 1; }
-  }
+/* ── UPLOAD ── */
+.upl-zone{border:2px dashed var(--b2);border-radius:var(--r);padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--card)}
+.upl-zone:hover,.upl-zone.drag{border-color:var(--a);background:var(--as)}
+.upl-ico{font-size:32px;margin-bottom:6px}
+.upl-ttl{font-size:13px;font-weight:700;color:var(--a)}
+.upl-sub{font-size:11px;color:var(--tm);margin-top:3px}
 
-  .chat-input-area {
-    padding: 12px 16px;
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    flex-shrink: 0;
-  }
-  .chat-input {
-    flex: 1;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 10px 16px;
-    color: var(--text);
-    font-size: 14px;
-    font-family: var(--font);
-    resize: none;
-    max-height: 120px;
-    outline: none;
-    transition: border-color 0.2s;
-    line-height: 1.4;
-  }
-  .chat-input:focus { border-color: var(--accent-border); }
-  .chat-input::placeholder { color: var(--text2); opacity: 0.6; }
+/* ── LOADING ── */
+.loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:24px;color:var(--tm);font-size:13px}
+.spin{width:22px;height:22px;border:2.5px solid var(--b);border-top-color:var(--a);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  .send-btn {
-    width: 42px; height: 42px;
-    border-radius: 50%;
-    background: var(--accent2);
-    border: none;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: transform 0.15s, background 0.2s;
-  }
-  .send-btn:active { transform: scale(0.92); }
-  .send-btn:disabled { background: var(--bg3); opacity: 0.5; }
+/* ── SETTINGS MODAL ── */
+.m-overlay{display:none;position:fixed;inset:0;background:rgba(13,22,87,.4);z-index:200;align-items:flex-end;backdrop-filter:blur(4px)}
+.m-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:22px 22px 0 0;width:100%;padding:18px 16px 36px;max-height:88dvh;overflow-y:auto;animation:slideUp .28s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.m-handle{width:40px;height:4px;background:var(--b);border-radius:2px;margin:0 auto 14px}
+.m-ttl{font-size:16px;font-weight:800;color:var(--t);margin-bottom:14px}
+.f-grp{margin-bottom:12px}
+.f-lbl{font-size:11px;font-weight:800;color:var(--t2);margin-bottom:5px;display:block;letter-spacing:.04em;text-transform:uppercase}
+.f-inp{width:100%;background:var(--bg);border:1.5px solid var(--b);border-radius:var(--r3);padding:11px 13px;color:var(--t);font-size:14px;font-family:var(--fn);outline:none;transition:border-color .2s}
+.f-inp:focus{border-color:var(--al)}
+.f-inp::placeholder{color:var(--tm)}
 
-  /* ── PDF PAGE ── */
-  .upload-zone {
-    border: 2px dashed var(--accent-border);
-    border-radius: var(--radius);
-    padding: 40px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 16px;
-    position: relative;
-  }
-  .upload-zone.drag { border-color: var(--accent); background: var(--accent-dim); }
-  .upload-icon { font-size: 40px; margin-bottom: 12px; }
-  .upload-title { font-size: 15px; font-weight: 500; color: var(--accent); margin-bottom: 6px; }
-  .upload-sub { font-size: 12px; color: var(--text2); }
-  #file-input { display: none; }
+/* ── TOAST ── */
+.toast{position:fixed;bottom:75px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--t);color:#fff;border-radius:22px;padding:9px 18px;font-size:12.5px;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:300;font-weight:700}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  .file-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-  .file-icon { font-size: 28px; }
-  .file-info { flex: 1; min-width: 0; }
-  .file-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .file-size { font-size: 11px; color: var(--text2); font-family: var(--mono); margin-top: 2px; }
+/* ── SMZP BOX ── */
+.smzp-box{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border:1.5px solid #90CAF9;border-radius:var(--r3);padding:12px 14px;margin-top:10px}
+.smzp-formula{font-size:11.5px;color:#0D47A1;font-family:monospace;line-height:1.8}
 
-  /* ── INN PAGE ── */
-  .field-group { margin-bottom: 16px; }
-  .field-label { font-size: 12px; color: var(--text2); font-family: var(--mono); margin-bottom: 6px; display: block; }
-  .field-input {
-    width: 100%;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 14px;
-    color: var(--text);
-    font-size: 15px;
-    font-family: var(--mono);
-    outline: none;
-    transition: border-color 0.2s;
-    letter-spacing: 0.05em;
-  }
-  .field-input:focus { border-color: var(--accent-border); }
-  .field-input::placeholder { color: var(--text2); opacity: 0.5; letter-spacing: 0; font-family: var(--font); }
+/* ── OSHIRISH ── */
+.osh-box{background:linear-gradient(135deg,#F3E5F5,#E8EAF6);border:1.5px solid #CE93D8;border-radius:var(--r3);padding:12px 14px;margin-top:10px}
+.osh-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(156,39,176,.12)}
+.osh-row:last-child{border:none;font-weight:800;color:#4A148C}
 
-  /* ── BUTTONS ── */
-  .btn {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: var(--radius);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: var(--font);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .btn-primary { background: var(--accent2); color: #fff; }
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-primary:disabled { opacity: 0.5; }
-  .btn-secondary { background: var(--accent-dim); border: 1px solid var(--accent-border); color: var(--accent); }
+/* ── AUDIT RESULT ── */
+.audit-section{background:var(--card);border-radius:var(--r);padding:15px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--b)}
+.audit-ttl{font-size:14px;font-weight:800;color:var(--t);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.audit-item{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--bg2);font-size:13px}
+.audit-item:last-child{border:none}
+.a-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.d-ok{background:var(--ok)}
+.d-w{background:var(--w)}
+.d-e{background:var(--e)}
 
-  /* ── RESULT CARD ── */
-  .result-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-top: 16px;
-    animation: msgIn 0.3s ease;
-  }
-  .result-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 14px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .result-title { font-size: 14px; font-weight: 600; color: var(--accent); }
-  .result-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(46,204,113,0.07);
-    font-size: 13px;
-    gap: 8px;
-  }
-  .result-row:last-child { border: none; }
-  .result-key { color: var(--text2); flex-shrink: 0; }
-  .result-val { color: var(--text); text-align: right; font-weight: 500; }
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 500;
-    font-family: var(--mono);
-  }
-  .badge-ok  { background: rgba(46,204,113,0.15); color: #2ecc71; }
-  .badge-warn{ background: var(--warn-bg); color: var(--warn); }
-  .badge-err { background: var(--err-bg); color: var(--err); }
-
-  /* ── SETTINGS PAGE ── */
-  .settings-section { margin-bottom: 24px; }
-  .settings-title { font-size: 11px; font-family: var(--mono); color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
-  .settings-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .settings-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-  }
-  .settings-row:last-child { border: none; }
-  .settings-row-label { color: var(--text); }
-  .settings-row-val { color: var(--text2); font-family: var(--mono); font-size: 12px; }
-  .api-input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 12px;
-    outline: none;
-    margin-top: 8px;
-  }
-
-  /* ── LANG MODAL ── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 100;
-    align-items: flex-end;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 20px 20px 0 0;
-    width: 100%;
-    padding: 20px 16px 32px;
-    animation: slideUp 0.25s ease;
-  }
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to   { transform: translateY(0); }
-  }
-  .modal-title { font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 16px; text-align: center; font-family: var(--mono); }
-  .lang-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.15s;
-    margin-bottom: 6px;
-  }
-  .lang-option:hover, .lang-option.selected { background: var(--accent-dim); }
-  .lang-flag { font-size: 24px; }
-  .lang-name { font-size: 14px; font-weight: 500; color: var(--text); }
-  .lang-code { font-size: 11px; color: var(--text2); font-family: var(--mono); }
-  .lang-check { margin-left: auto; color: var(--accent); font-size: 18px; }
-
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 3px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  /* ── TOAST ── */
-  .toast {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 8px 16px;
-    font-size: 12px;
-    color: var(--text2);
-    font-family: var(--mono);
-    opacity: 0;
-    transition: all 0.3s;
-    pointer-events: none;
-    white-space: nowrap;
-    z-index: 50;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* ── STATUS indicator ── */
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: pulse 2s infinite;
-    display: inline-block;
-    margin-right: 4px;
-  }
-  @keyframes pulse {
-    0%,100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
-<div class="header">
-  <div class="logo">
-    <div class="logo-icon">⚖️</div>
-    <div class="logo-text">
-      <div class="logo-title" id="app-title">PENSIYA AUDIT</div>
-      <div class="logo-sub"><span class="status-dot"></span><span id="app-sub">AI Auditor Tizimi</span></div>
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="hdr-ico">⚖️</div>
+    <div>
+      <div class="hdr-title">Пенсия AI Ассистент</div>
+      <div class="hdr-sub">Ўзбекистон Республикаси · ПФМФ</div>
     </div>
   </div>
-  <button class="lang-btn" onclick="openLang()" id="lang-display">UZ</button>
+  <div class="hdr-btn" onclick="openSettings()">⚙️</div>
 </div>
 
 <!-- TABS -->
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('chat')" id="tab-chat">
-    <span class="tab-icon">💬</span>
-    <span id="tab-chat-label">Chat</span>
+  <div class="tab active" onclick="goTab('profile')" id="tab-profile">
+    <span class="tab-ico">👤</span><span>Профиль</span>
   </div>
-  <div class="tab" onclick="switchTab('pdf')" id="tab-pdf">
-    <span class="tab-icon">📄</span>
-    <span id="tab-pdf-label">PDF</span>
+  <div class="tab" onclick="goTab('electronic')" id="tab-electronic">
+    <span class="tab-ico">🏦</span><span>Маълумот</span>
   </div>
-  <div class="tab" onclick="switchTab('inn')" id="tab-inn">
-    <span class="tab-icon">🔍</span>
-    <span id="tab-inn-label">INN</span>
+  <div class="tab" onclick="goTab('audit')" id="tab-audit">
+    <span class="tab-ico">📊</span><span>Аудит</span>
   </div>
-  <div class="tab" onclick="switchTab('settings')" id="tab-settings">
-    <span class="tab-icon">⚙️</span>
-    <span id="tab-settings-label">Sozlama</span>
+  <div class="tab" onclick="goTab('chat')" id="tab-chat">
+    <span class="tab-ico">💬</span><span>AI Чат</span>
   </div>
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- MAIN -->
 <div class="main">
 
-  <!-- CHAT PAGE -->
-  <div id="page-chat" class="page active">
-    <div class="messages" id="messages">
-      <div class="msg msg-bot">
-        <div class="msg-bubble" id="welcome-msg">Salom! Men pensiya auditor assistentman.
-📄 PDF hujjat yuboring → to'liq tahlil
-🔍 INN kiriting → ma'lumot oling
-❓ Savol bering → javob beraman</div>
-        <div class="msg-time" id="welcome-time"></div>
+<!-- ═══════════════ 1. ПРОФИЛЬ ═══════════════ -->
+<div id="page-profile" class="page active">
+
+  <!-- PINFL qidirish -->
+  <div id="pinfl-box">
+    <div class="pinfl-wrap">
+      <div class="pinfl-ico">🔍</div>
+      <div class="pinfl-ttl">Пенсионер маълумотлари</div>
+      <div class="pinfl-sub">14 та рақамдан иборат ПИНФЛ рақамини киритинг<br>ва пенсия дастуридан маълумот юкланади</div>
+      <div class="pinfl-row">
+        <input class="pinfl-inp" type="tel" id="pinfl-inp" maxlength="14" inputmode="numeric"
+          placeholder="00000000000000" onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="btn btn-p" onclick="doSearch()" id="pinfl-btn" style="padding:12px 16px">🔍</button>
       </div>
     </div>
-    <div class="chat-input-area">
-      <textarea class="chat-input" id="chat-input" rows="1"
-        placeholder="Savol yozing..."
-        onkeydown="handleKey(event)"
-        oninput="autoResize(this)"></textarea>
-      <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+    <div id="pinfl-loading" style="display:none">
+      <div class="loading"><div class="spin"></div>Маълумотлар юкланмоқда...</div>
     </div>
   </div>
 
-  <!-- PDF PAGE -->
-  <div id="page-pdf" class="page">
-    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()"
+  <!-- Natija -->
+  <div id="profile-result" style="display:none">
+
+    <!-- 1. QAROR -->
+    <div class="sec-ttl">📜 ПЕНСИЯ ТАЙИНЛАШ ҚАРОРИ</div>
+    <div class="qaror-box">
+      <div class="qaror-num" id="q-num">Рақам: —</div>
+      <div class="qaror-ttl">ЯНГИДАН ТАЙИНЛАШ</div>
+      <div class="qaror-row"><span class="qaror-k">Фуқаро</span><span class="qaror-v" id="q-name">—</span></div>
+      <div class="qaror-row"><span class="qaror-k">Тайинлаш санаси</span><span class="qaror-v" id="q-date">—</span></div>
+      <div class="qaror-row"><span class="qaror-k">Муддати</span><span class="qaror-v" id="q-term">—</span></div>
+      <div class="qaror-row"><span class="qaror-k">Пенсия тури</span><span class="qaror-v" id="q-type">—</span></div>
+      <div class="qaror-row"><span class="qaror-k">Миқдор (тайинланган)</span><span class="qaror-v" id="q-amount">—</span></div>
+      <div class="qaror-row"><span class="qaror-k">Бошлиқ</span><span class="qaror-v" id="q-boss">—</span></div>
+      <div class="qaror-row"><span class="qaror-k">Гуруҳ раҳбари</span><span class="qaror-v" id="q-lead">—</span></div>
+      <div class="qaror-row"><span class="qaror-k">Инспектор</span><span class="qaror-v" id="q-insp">—</span></div>
+    </div>
+
+    <!-- 2. HERO + UMUMIY -->
+    <div class="sec-ttl">👤 ПЕНСИОНЕР ПРОФИЛИ</div>
+    <div class="hero">
+      <div class="hero-av">👤</div>
+      <div class="hero-name" id="h-name">—</div>
+      <div class="hero-pinfl" id="h-pinfl">ПИНФЛ: —</div>
+      <div class="hero-tags">
+        <div class="hero-tag" id="h-type">—</div>
+        <div class="hero-tag" id="h-cond">—</div>
+        <div class="hero-tag" id="h-gender">—</div>
+      </div>
+    </div>
+
+    <!-- Asosiy ma'lumotlar -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ico">📋</div>
+        <div><div class="card-ttl">Асосий маълумотлар</div><div class="card-sub">Шахсий ва пенсия маълумотлари</div></div>
+      </div>
+      <div class="row"><span class="rk">Туғилган санаси</span><span class="rv" id="p-birth">—</span></div>
+      <div class="row"><span class="rk">Жинси</span><span class="rv" id="p-gender">—</span></div>
+      <div class="row"><span class="rk">Мурожаат санаси</span><span class="rv" id="p-apply">—</span></div>
+      <div class="row"><span class="rk">Тайинлаш санаси</span><span class="rv" id="p-assign">—</span></div>
+      <div class="row"><span class="rk">Ҳисоблаш санаси</span><span class="rv" id="p-calc">—</span></div>
+    </div>
+
+    <!-- 3. PENSIYA MIQDORI -->
+    <div class="sec-ttl">💰 ПЕНСИЯ МИҚДОРИ</div>
+    <div class="pen-sum">
+      <div class="pen-lbl">ТАЙИНЛАНГАН МИҚДОР</div>
+      <div class="pen-val" id="pen-base">—</div>
+      <div class="pen-sub">
+        Таянч: <strong id="pen-tayanch">—</strong> + Ошириш: <strong id="pen-osh-sum">—</strong> (<span id="pen-osh-pct">—</span>%)
+      </div>
+      <div class="pen-cur" id="pen-cur">Жорий миқдор (ошириш билан): <strong>—</strong></div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ico">🧮</div>
+        <div><div class="card-ttl">Ҳисоблаш маълумотлари</div><div class="card-sub">СИЗП ва иш ҳақи ҳисоби</div></div>
+      </div>
+      <div class="row"><span class="rk">Ҳақиқий ўртача иш ҳақи (СИЗП)</span><span class="rv" id="p-sizp">—</span></div>
+      <div class="row"><span class="rk">Ҳисобга олинган иш ҳақи</span><span class="rv" id="p-counted">—</span></div>
+      <div class="row"><span class="rk">СМЗП (ўртача)</span><span class="rv" id="p-smzp">—</span></div>
+      <div class="row"><span class="rk">Жами индекслаш суммаси</span><span class="rv" id="p-idx-total">—</span></div>
+      <div class="row"><span class="rk">Ошириш коэффициенти</span><span class="rv" id="p-osh-k">—</span></div>
+    </div>
+
+    <!-- SMZP formula -->
+    <div class="smzp-box">
+      <div style="font-size:11px;font-weight:800;color:#0D47A1;margin-bottom:6px;">СМЗП ФОРМУЛАСИ</div>
+      <div class="smzp-formula" id="smzp-formula">—</div>
+    </div>
+
+    <!-- Oshirish -->
+    <div class="osh-box" style="margin-top:12px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:800;color:#4A148C;margin-bottom:8px;">ОШИРИШ КЎРСАТКИЧЛАРИ</div>
+      <div class="osh-row"><span>01.09.2024 дан</span><span>×1.15 (+15%)</span></div>
+      <div class="osh-row"><span>01.07.2025 дан</span><span>×1.10 (+10%)</span></div>
+      <div class="osh-row"><span>Умумий ошириш</span><span>×1.265</span></div>
+      <div class="osh-row"><span>Тайинланган миқдор</span><span id="osh-base-v">—</span></div>
+      <div class="osh-row"><span>Жорий миқдор (×1.265)</span><span id="osh-cur-v">—</span></div>
+    </div>
+
+    <!-- 4. ISH STAJI -->
+    <div class="sec-ttl">⏱️ ИШ СТАЖИ</div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ico">📅</div>
+        <div><div class="card-ttl">Стаж ҳисоби</div><div class="card-sub">Ҳисобга олинган барча даврлар</div></div>
+      </div>
+      <div class="row">
+        <span class="rk">Умумий стаж</span>
+        <span class="rv"><span id="staj-total">—</span> <span class="bdg bdg-ok">✓ норма</span></span>
+      </div>
+      <div class="row"><span class="rk">Таlab (умумий)</span><span class="rv" id="staj-req">—</span></div>
+      <div class="row"><span class="rk">Имтиёзли стаж</span><span class="rv" id="staj-imtiyoz">—</span></div>
+      <div class="row"><span class="rk">Ортиқча стаж ошириши</span><span class="rv" id="staj-extra">—</span></div>
+      <div style="margin-top:12px">
+        <div class="sec-ttl" style="margin-bottom:8px">Стаж даврлари</div>
+        <div id="staj-list"></div>
+      </div>
+    </div>
+
+    <!-- 10 yillik staj -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ico">🗓️</div>
+        <div><div class="card-ttl">10 йиллик иш стажи</div><div class="card-sub">Сўнгги 10 йиллик давр</div></div>
+      </div>
+      <div id="staj10-list"></div>
+      <div class="row" style="margin-top:8px"><span class="rk">Жами 10 йиллик стаж</span><span class="rv bdg bdg-ok" id="staj10-total">—</span></div>
+    </div>
+
+    <!-- 5. ISH HAQI JADVALI -->
+    <div class="sec-ttl">📊 ИШ ҲАҚИ МАЪЛУМОТЛАРИ</div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ico">💵</div>
+        <div><div class="card-ttl">Йиллик иш ҳақи жадвали</div><div class="card-sub">2014–2024 йиллар</div></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Йил</th><th class="num-r">Жами иш ҳақи</th><th class="num-r">Индекслаш суммаси</th></tr></thead>
+          <tbody id="salary-tbody"></tbody>
+          <tfoot><tr><td>Жами</td><td class="num-r" id="sal-total">—</td><td class="num-r" id="idx-total-foot">—</td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- 6. INDEKS JADVALI (qisqartirilgan) -->
+    <div class="sec-ttl">📈 ИНДЕКСЛАШ ҲИСОБ-КИТОБИ</div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ico">🔢</div>
+        <div><div class="card-ttl">Ойлик индекслаш жадвали</div><div class="card-sub">МЗП · Иш ҳақи · Инд.К · Натижа</div></div>
+      </div>
+      <div class="tbl-wrap">
+        <table class="idx-tbl">
+          <thead><tr><th>Йил/Ой</th><th>МЗП</th><th>Иш ҳақи</th><th>Инд.К</th><th>Натижа</th></tr></thead>
+          <tbody id="idx-tbody"></tbody>
+          <tfoot><tr class="tot-row"><td colspan="4">ЖАМИ</td><td id="idx-grand-total">—</td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- PDF -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-hdr">
+        <div class="card-ico">📁</div>
+        <div><div class="card-ttl">PDF Ҳужжатлар</div><div class="card-sub">Дастурдан юкланган ҳужжатлар</div></div>
+      </div>
+      <div id="pdf-list">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:var(--r3);cursor:pointer;margin-bottom:8px" onclick="showToast('Пенсия дастури API уланганда PDF очилади')">
+          <span style="font-size:22px">📄</span>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700" id="pdf-qaror-name">Пенсия тайинлаш қарори</div>
+            <div style="font-size:11px;color:var(--tm)" id="pdf-qaror-sub">—</div>
+          </div>
+          <span style="color:var(--a);font-size:18px">👁</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:var(--r3);cursor:pointer" onclick="showToast('Пенсия дастури API уланганда PDF очилади')">
+          <span style="font-size:22px">📄</span>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700">Пенсия ҳисоби ҳужжати</div>
+            <div style="font-size:11px;color:var(--tm)">Стаж ва иш ҳақи ҳисоботи</div>
+          </div>
+          <span style="color:var(--a);font-size:18px">👁</span>
+        </div>
+      </div>
+      <div class="upl-zone" style="margin-top:10px;padding:14px" onclick="document.getElementById('f-pdf').click()">
+        <div style="font-size:18px">⬆️</div>
+        <div class="upl-ttl" style="font-size:12px">Янги PDF юклаш</div>
+      </div>
+      <input type="file" id="f-pdf" accept=".pdf,.doc,.docx" style="display:none" onchange="showToast('📄 Файл юкланди: '+this.files[0]?.name)">
+    </div>
+
+    <button class="btn btn-o btn-bl" onclick="clearSearch()" style="margin-bottom:20px">🔄 Бошқа пенсионер</button>
+  </div>
+</div>
+
+<!-- ═══════════════ 2. ЭЛЕКТРОН МАЪЛУМОТЛАР ═══════════════ -->
+<div id="page-electronic" class="page">
+  <div class="sec-ttl">🏛️ ВАЗИРЛИК МАЪЛУМОТЛАРИ</div>
+
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-ico">🏛️</div>
+      <div><div class="card-ttl">ЯММТ Маълумотлари</div><div class="card-sub">Ягона меҳнат мониторинги тизими</div></div>
+    </div>
+    <div class="row"><span class="rk">Иш жойи</span><span class="rv" id="y-work">API орқали олинади</span></div>
+    <div class="row"><span class="rk">Лавозим</span><span class="rv" id="y-pos">—</span></div>
+    <div class="row"><span class="rk">Ишга кирган</span><span class="rv" id="y-from">—</span></div>
+    <div class="row"><span class="rk">Охирги иш куни</span><span class="rv" id="y-to">—</span></div>
+    <div class="row"><span class="rk">Иш стажи (ЯММТ)</span><span class="rv" id="y-staj">—</span></div>
+    <button class="btn btn-p btn-bl" onclick="fetchApi('yammt')">🔄 Маълумот олиш</button>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-ico">🏦</div>
+      <div><div class="card-ttl">Халқ банки ИНПС</div><div class="card-sub">Индивидуал пенсия тўпловчи ҳисоб</div></div>
+    </div>
+    <div class="row"><span class="rk">ИНПС ҳисоб рақами</span><span class="rv" id="i-acc">API орқали олинади</span></div>
+    <div class="row"><span class="rk">Жамғарилган миқдор</span><span class="rv" id="i-total">—</span></div>
+    <div class="row"><span class="rk">Ойлик ажратма</span><span class="rv" id="i-monthly">—</span></div>
+    <div class="row"><span class="rk">Охирги тўлов</span><span class="rv" id="i-last">—</span></div>
+    <button class="btn btn-p btn-bl" onclick="fetchApi('inps')">🔄 Маълумот олиш</button>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-hdr">
+      <div class="card-ico">🧾</div>
+      <div><div class="card-ttl">Солиқ Иш Ҳақи Маълумотлари</div><div class="card-sub">Солиқ қўмитаси маълумотлари</div></div>
+    </div>
+    <div class="row"><span class="rk">ИНН</span><span class="rv" id="t-inn">API орқали олинади</span></div>
+    <div class="row"><span class="rk">Иш ҳақи 2023</span><span class="rv" id="t-2023">—</span></div>
+    <div class="row"><span class="rk">Иш ҳақи 2022</span><span class="rv" id="t-2022">—</span></div>
+    <div class="row"><span class="rk">Тўланган солиқ</span><span class="rv" id="t-tax">—</span></div>
+    <button class="btn btn-p btn-bl" onclick="fetchApi('tax')">🔄 Маълумот олиш</button>
+  </div>
+
+  <div style="background:var(--w-b);border-radius:var(--r3);padding:12px 14px;font-size:12px;color:var(--w);margin-bottom:20px;font-weight:600">
+    ⚠️ Маълумотларни олиш учун Созламалардан API манзилларни киритинг
+  </div>
+</div>
+
+<!-- ═══════════════ 3. AI AUDIT ═══════════════ -->
+<div id="page-audit" class="page">
+  <div class="sec-ttl">🤖 AI АУДИТ ҲИСОБОТИ</div>
+
+  <div class="card">
+    <div class="card-hdr">
+      <div class="card-ico">🔬</div>
+      <div><div class="card-ttl">Автоматик аудит</div><div class="card-sub">Пенсия маълумотлари таҳлили</div></div>
+    </div>
+    <div style="font-size:13px;color:var(--tm);line-height:1.6;margin-bottom:12px">
+      AI аудит юкланган пенсионер маълумотлари ва вазирлик маълумотларини Ўзбекистон қонунчилиги асосида текширади, хатоларни топади ва тавсиялар беради.
+    </div>
+    <button class="btn btn-p btn-bl" onclick="runAudit()" id="audit-btn">🔬 Аудитни бошлаш</button>
+  </div>
+
+  <div id="audit-result" style="display:none"></div>
+
+  <!-- PDF audit -->
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-hdr">
+      <div class="card-ico">📄</div>
+      <div><div class="card-ttl">Ҳужжат юклаб аудит</div><div class="card-sub">PDF ёки DOC файл</div></div>
+    </div>
+    <div class="upl-zone" id="a-upl" onclick="document.getElementById('f-audit').click()"
          ondragover="event.preventDefault();this.classList.add('drag')"
          ondragleave="this.classList.remove('drag')"
-         ondrop="handleDrop(event)">
-      <div class="upload-icon">📂</div>
-      <div class="upload-title" id="upload-title">Fayl yuklang</div>
-      <div class="upload-sub" id="upload-sub">PDF, DOC, DOCX, TXT · Bosing yoki tashlang</div>
+         ondrop="handleADrop(event)">
+      <div class="upl-ico">📂</div>
+      <div class="upl-ttl">Ҳужжатни юкланг</div>
+      <div class="upl-sub">PDF, DOC, DOCX · Босинг ёки ташланг</div>
     </div>
-    <input type="file" id="file-input" accept=".pdf,.doc,.docx,.txt" onchange="handleFile(this.files[0])">
-
-    <div id="file-preview" style="display:none;">
-      <div class="file-card">
-        <div class="file-icon">📄</div>
-        <div class="file-info">
-          <div class="file-name" id="file-name"></div>
-          <div class="file-size" id="file-size"></div>
-        </div>
-        <button onclick="clearFile()" style="background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;">✕</button>
+    <input type="file" id="f-audit" accept=".pdf,.doc,.docx,.txt" style="display:none" onchange="setAFile(this.files[0])">
+    <div id="a-file-info" style="display:none;margin-top:10px">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg);border-radius:var(--r3)">
+        <span style="font-size:20px">📄</span>
+        <div style="flex:1"><div style="font-size:13px;font-weight:700" id="a-fname"></div><div style="font-size:11px;color:var(--tm)" id="a-fsize"></div></div>
+        <span onclick="clearAFile()" style="cursor:pointer;color:var(--tm);font-size:18px">✕</span>
       </div>
-      <button class="btn btn-primary" id="analyze-btn" onclick="analyzeFile()">
-        <span>🔬</span> <span id="analyze-label">Tahlil qilish</span>
-      </button>
+      <button class="btn btn-p btn-bl" onclick="analyzeAFile()" id="a-analyze-btn">🔬 Таҳлил қилиш</button>
     </div>
-
-    <div id="pdf-result"></div>
   </div>
+</div>
 
-  <!-- INN PAGE -->
-  <div id="page-inn" class="page">
-    <div class="field-group">
-      <label class="field-label" id="inn-label">INN / Pasport raqami</label>
-      <input class="field-input" id="inn-input" type="text" placeholder="1234567890" maxlength="14" inputmode="numeric">
+<!-- ═══════════════ 4. AI CHAT ═══════════════ -->
+<div id="page-chat" class="page">
+  <div class="msgs" id="msgs">
+    <div class="msg msg-b">
+      <div class="bbl">Ассалому алайкум! Мен пенсия қонунчилиги бўйича AI ассистентман.
+
+📋 Пенсия ҳисоблаш формулалари
+⚖️ Қонунчилик нормалари
+📄 Ҳужжат таҳлили
+❓ Исталган савол
+
+Нима билмоқчисиз?</div>
+      <div class="msg-t" id="wt"></div>
     </div>
-    <div class="field-group">
-      <label class="field-label" id="fio-label">F.I.O. (ixtiyoriy)</label>
-      <input class="field-input" id="fio-input" type="text" placeholder="Familiya Ism Otasining ismi">
-    </div>
-    <button class="btn btn-primary" onclick="searchINN()" id="search-btn">
-      <span>🔍</span> <span id="search-label">Qidirish va tahlil</span>
-    </button>
-    <div id="inn-result"></div>
   </div>
-
-  <!-- SETTINGS PAGE -->
-  <div id="page-settings" class="page">
-    <div class="settings-section">
-      <div class="settings-title" id="settings-api-title">API Sozlamalari</div>
-      <div class="settings-card">
-        <div class="settings-row">
-          <div>
-            <div class="settings-row-label">Anthropic API Key</div>
-            <input class="api-input" type="password" id="api-key-input"
-              placeholder="sk-ant-..." onchange="saveApiKey(this.value)">
-          </div>
-        </div>
-        <div class="settings-row">
-          <span class="settings-row-label" id="settings-model-label">Model</span>
-          <span class="settings-row-val">claude-sonnet-4-6</span>
-        </div>
-        <div class="settings-row">
-          <span class="settings-row-label" id="settings-status-label">Holat</span>
-          <span class="settings-row-val" id="api-status">⚠️ Sozlanmagan</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-title" id="settings-server-title">Server Sozlamalari</div>
-      <div class="settings-card">
-        <div class="settings-row">
-          <div>
-            <div class="settings-row-label" id="settings-server-label">Lokal server manzili</div>
-            <input class="api-input" type="text" id="server-url-input"
-              placeholder="http://192.168.1.100:8000" onchange="saveServerUrl(this.value)">
-          </div>
-        </div>
-        <div class="settings-row">
-          <span class="settings-row-label" id="settings-server-status-label">Server holati</span>
-          <span class="settings-row-val" id="server-status">—</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-title" id="settings-about-title">Ilova haqida</div>
-      <div class="settings-card">
-        <div class="settings-row">
-          <span class="settings-row-label">Versiya</span>
-          <span class="settings-row-val">v1.0.0</span>
-        </div>
-        <div class="settings-row">
-          <span class="settings-row-label" id="settings-lang-label">Til</span>
-          <span class="settings-row-val" id="current-lang-display">O'zbek (lotin)</span>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn btn-secondary" onclick="testApi()" style="margin-bottom:10px;">
-      <span>🔌</span> <span id="test-btn-label">API ni tekshirish</span>
-    </button>
-    <button class="btn btn-secondary" onclick="checkServer()">
-      <span>📡</span> <span id="server-btn-label">Serverni tekshirish</span>
-    </button>
+  <div class="chat-bar">
+    <textarea class="chat-inp" id="chat-inp" rows="1" placeholder="Савол ёзинг..."
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"
+      oninput="autoR(this)"></textarea>
+    <button class="send-btn" id="send-btn" onclick="sendMsg()">➤</button>
   </div>
+</div>
 
 </div><!-- /main -->
 
-<!-- LANGUAGE MODAL -->
-<div class="modal-overlay" id="lang-modal" onclick="if(event.target===this)closeLang()">
+<!-- SETTINGS MODAL -->
+<div class="m-overlay" id="set-modal" onclick="if(event.target===this)closeSet()">
   <div class="modal">
-    <div class="modal-title">🌐 Til / Language / Язык</div>
-    <div class="lang-option selected" onclick="setLang('uz')" id="lang-uz">
-      <span class="lang-flag">🇺🇿</span>
-      <div><div class="lang-name">O'zbek (lotin)</div><div class="lang-code">UZ</div></div>
-      <span class="lang-check" id="check-uz">✓</span>
+    <div class="m-handle"></div>
+    <div class="m-ttl">⚙️ Созламалар</div>
+    <div class="f-grp">
+      <label class="f-lbl">Anthropic API Калит</label>
+      <input class="f-inp" type="password" id="s-api" placeholder="sk-ant-..." oninput="saveSet()">
     </div>
-    <div class="lang-option" onclick="setLang('kr')" id="lang-kr">
-      <span class="lang-flag">🇺🇿</span>
-      <div><div class="lang-name">Ўзбек (кирилл)</div><div class="lang-code">КР</div></div>
-      <span class="lang-check" id="check-kr" style="display:none">✓</span>
+    <div class="f-grp">
+      <label class="f-lbl">Пенсия дастури сервери (pfmf.uz)</label>
+      <input class="f-inp" type="text" id="s-pfmf" placeholder="http://main.pfmf.uz" oninput="saveSet()">
     </div>
-    <div class="lang-option" onclick="setLang('ru')" id="lang-ru">
-      <span class="lang-flag">🇷🇺</span>
-      <div><div class="lang-name">Русский</div><div class="lang-code">RU</div></div>
-      <span class="lang-check" id="check-ru" style="display:none">✓</span>
+    <div class="f-grp">
+      <label class="f-lbl">ЯММТ API манзили</label>
+      <input class="f-inp" type="text" id="s-yammt" placeholder="https://..." oninput="saveSet()">
     </div>
+    <div class="f-grp">
+      <label class="f-lbl">ИНПС API манзили</label>
+      <input class="f-inp" type="text" id="s-inps" placeholder="https://..." oninput="saveSet()">
+    </div>
+    <div class="f-grp">
+      <label class="f-lbl">Солиқ API манзили</label>
+      <input class="f-inp" type="text" id="s-tax" placeholder="https://..." oninput="saveSet()">
+    </div>
+    <button class="btn btn-p btn-bl" onclick="testApi()" style="margin-bottom:8px">🔌 API текшириш</button>
+    <button class="btn btn-o btn-bl" onclick="closeSet()">Ёпиш</button>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ──
-let currentLang = localStorage.getItem('lang') || 'uz';
-let apiKey = localStorage.getItem('apiKey') || '';
-let serverUrl = localStorage.getItem('serverUrl') || '';
-let selectedFile = null;
-let chatHistory = [];
-let isTyping = false;
-
-// ── TRANSLATIONS ──
-const T = {
-  uz: {
-    appTitle: 'PENSIYA AUDIT', appSub: 'AI Auditor Tizimi',
-    tabChat: 'Chat', tabPdf: 'PDF', tabInn: 'INN', tabSettings: 'Sozlama',
-    welcome: `Salom! Men pensiya auditor assistentman.\n📄 PDF hujjat yuboring → to'liq tahlil\n🔍 INN kiriting → ma'lumot oling\n❓ Savol bering → javob beraman`,
-    uploadTitle: 'Fayl yuklang', uploadSub: 'PDF, DOC, DOCX, TXT · Bosing yoki tashlang',
-    analyzeLabel: 'Tahlil qilish', innLabel: 'INN / Pasport raqami',
-    fioLabel: "F.I.O. (ixtiyoriy)", searchLabel: 'Qidirish va tahlil',
-    chatPlaceholder: 'Savol yozing...',
-    apiTitle: 'API Sozlamalari', serverTitle: 'Server Sozlamalari',
-    aboutTitle: 'Ilova haqida', modelLabel: 'Model', statusLabel: 'Holat',
-    serverLabel: 'Lokal server manzili', serverStatusLabel: 'Server holati',
-    langLabel: 'Til', langDisplay: "O'zbek (lotin)",
-    testBtn: 'API ni tekshirish', serverBtn: 'Serverni tekshirish',
-    noKey: '⚠️ API key kiritilmagan', analyzing: '⏳ Tahlil qilinmoqda...',
-    noFile: 'Fayl tanlanmagan', apiOk: '✅ Ulandi', apiErr: '❌ Xato',
-    serverOk: '✅ Ulandi', serverErr: '❌ Ulanmadi',
-    innEmpty: 'INN kiriting', searching: '⏳ Qidirilmoqda...',
-    resultTitle: 'Tahlil natijasi', copyOk: 'Nusxalandi!',
-    systemPrompt: `Sen O'zbekiston pensiya tizimi bo'yicha auditor assistentsan. Pensiya hujjatlarini, staj hisobini, ish haqi indekslashini, pensiya miqdorini tekshirasan. Xatolarni aniqlab, tavsiya berasan. Javob qisqa, aniq va O'zbek tilida bo'lsin.`
-  },
-  kr: {
-    appTitle: 'ПЕНСИЯ АУДИТ', appSub: 'AI Аудитор Тизими',
-    tabChat: 'Чат', tabPdf: 'ПДФ', tabInn: 'ИНН', tabSettings: 'Созлама',
-    welcome: `Салом! Мен пенсия аудитор ассистентман.\n📄 ПДФ ҳужжат юборинг → тўлиқ таҳлил\n🔍 ИНН киритинг → маълумот олинг\n❓ Савол беринг → жавоб берилади`,
-    uploadTitle: 'Файл юкланг', uploadSub: 'PDF, DOC, DOCX, TXT · Босинг ёки ташланг',
-    analyzeLabel: 'Таҳлил қилиш', innLabel: 'ИНН / Паспорт рақами',
-    fioLabel: "Ф.И.О. (ихтиёрий)", searchLabel: 'Қидириш ва таҳлил',
-    chatPlaceholder: 'Савол ёзинг...',
-    apiTitle: 'API Созламалари', serverTitle: 'Сервер Созламалари',
-    aboutTitle: 'Илова ҳақида', modelLabel: 'Модел', statusLabel: 'Ҳолат',
-    serverLabel: 'Локал сервер манзили', serverStatusLabel: 'Сервер ҳолати',
-    langLabel: 'Тил', langDisplay: 'Ўзбек (кирилл)',
-    testBtn: 'API ни текшириш', serverBtn: 'Серверни текшириш',
-    noKey: '⚠️ API калит киритилмаган', analyzing: '⏳ Таҳлил қилинмоқда...',
-    noFile: 'Файл танланмаган', apiOk: '✅ Уланди', apiErr: '❌ Хато',
-    serverOk: '✅ Уланди', serverErr: '❌ Уланмади',
-    innEmpty: 'ИНН киритинг', searching: '⏳ Қидирилмоқда...',
-    resultTitle: 'Таҳлил натижаси', copyOk: 'Нусхаланди!',
-    systemPrompt: `Сен Ўзбекистон пенсия тизими бўйича аудитор ассистентсан. Пенсия ҳужжатларини, стаж ҳисобини, иш ҳақи индекслашини, пенсия миқдорини текширасан. Хатоларни аниқлаб, тавсия берасан. Жавоб қисқа, аниқ ва Ўзбек тилида бўлсин.`
-  },
-  ru: {
-    appTitle: 'ПЕНСИЯ АУДИТ', appSub: 'ИИ Система Аудита',
-    tabChat: 'Чат', tabPdf: 'PDF', tabInn: 'ИНН', tabSettings: 'Настройки',
-    welcome: `Здравствуйте! Я ассистент-аудитор пенсионной системы.\n📄 Отправьте PDF документ → полный анализ\n🔍 Введите ИНН → получите данные\n❓ Задайте вопрос → получите ответ`,
-    uploadTitle: 'Загрузить файл', uploadSub: 'PDF, DOC, DOCX, TXT · Нажмите или перетащите',
-    analyzeLabel: 'Анализировать', innLabel: 'ИНН / Номер паспорта',
-    fioLabel: "Ф.И.О. (необязательно)", searchLabel: 'Найти и анализировать',
-    chatPlaceholder: 'Введите вопрос...',
-    apiTitle: 'Настройки API', serverTitle: 'Настройки сервера',
-    aboutTitle: 'О приложении', modelLabel: 'Модель', statusLabel: 'Статус',
-    serverLabel: 'Адрес локального сервера', serverStatusLabel: 'Статус сервера',
-    langLabel: 'Язык', langDisplay: 'Русский',
-    testBtn: 'Проверить API', serverBtn: 'Проверить сервер',
-    noKey: '⚠️ API ключ не введён', analyzing: '⏳ Анализируется...',
-    noFile: 'Файл не выбран', apiOk: '✅ Подключено', apiErr: '❌ Ошибка',
-    serverOk: '✅ Подключено', serverErr: '❌ Не подключён',
-    innEmpty: 'Введите ИНН', searching: '⏳ Поиск...',
-    resultTitle: 'Результат анализа', copyOk: 'Скопировано!',
-    systemPrompt: `Ты ассистент-аудитор пенсионной системы Узбекистана. Проверяешь пенсионные документы, стаж, индексацию зарплаты, размер пенсии. Выявляешь ошибки и даёшь рекомендации. Отвечай кратко, точно, на русском языке.`
-  }
+// ═══════════════════════════════════════════
+// MA'LUMOT — hujjatdan olindi (demo)
+// ═══════════════════════════════════════════
+const DEMO = {
+  pinfl: "12345678901234",
+  name: "Мирсаидов Бахтиёр Мирвохидович",
+  qaror_num: "№26724107 · 2024 йил 06 март",
+  assign_date: "01.07.2025",
+  apply_date: "06.03.2024",
+  birth: "06.03.1964",
+  gender: "Эркак",
+  calc_date: "13.05.2026",
+  type: "Ёшга доир пенсия",
+  condition: "Умумий асосларда",
+  term: "Умрбод",
+  boss: "Холмуродов Зафар Шодиевич",
+  lead: "Шавкатов Амир Темурхон",
+  insp: "Сотволдиев Исомиддин Алимардон ўғли",
+  pension_base: 4069440,
+  pension_tayanch: 3108600,
+  pension_osh_sum: 960840,
+  pension_osh_pct: 17,
+  osh_k: 1.265,
+  sizp: 6346607.38,
+  counted_salary: 5652000,
+  smzp: 351333.33,
+  idx_total: 380796443.35,
+  staj_total: "42 йил 4 ой",
+  staj_req: "25 йил",
+  staj_imtiyoz: "Йўқ",
+  staj_extra: "17% · 960 840 сўм",
+  staj_list: [
+    {n:1, from:"14.08.1981", to:"18.10.1982", type:"Давлат ижтимоий суғурта", dur:"1й 2о 5к"},
+    {n:2, from:"18.11.1982", to:"27.12.1984", type:"Ҳарбий хизмат", dur:"2й 1о 10к"},
+    {n:3, from:"05.02.1985", to:"04.01.2002", type:"Давлат ижтимоий суғурта", dur:"16й 10о 28к"},
+    {n:4, from:"07.01.2002", to:"05.03.2024", type:"Давлат ижтимоий суғурта", dur:"22й 2о 0к"},
+  ],
+  staj10_list: [
+    {n:1, from:"07.03.2014", to:"05.03.2024", type:"Давлат ижтимоий суғурта", dur:"9й 11о 30к"},
+  ],
+  staj10_total: "10 йил 0 ой 0 кун",
+  smzp_formula: `324 000  (Март 2023 - Март 2023) × 1\n347 000  (Апрел 2023 - Ноябр 2023) × 8\n372 000  (Декабр 2023 - Феврал 2024) × 3\n────────────────────────────────────\n4 216 000 ÷ 12 = 351 333.33 сўм`,
+  salary_years: [
+    {y:2014, sal:3720000, idx:0},
+    {y:2015, sal:6200000, idx:0},
+    {y:2016, sal:7620000, idx:0},
+    {y:2017, sal:9240000, idx:0},
+    {y:2018, sal:10090000, idx:0},
+    {y:2019, sal:10700000, idx:22261610},
+    {y:2020, sal:13200000, idx:23930203},
+    {y:2021, sal:21600000, idx:35455735},
+    {y:2022, sal:21600000, idx:30825416},
+    {y:2023, sal:121122034, idx:152261245},
+    {y:2024, sal:97145763, idx:116062234},
+  ],
+  idx_months: [
+    {y:2019,m:"Март",mzp:202730,sal:940000,k:4.6367,nat:2060719},
+    {y:2019,m:"Апрел",mzp:202730,sal:940000,k:4.6367,nat:2060719},
+    {y:2019,m:"Май",mzp:202730,sal:940000,k:4.6367,nat:2060719},
+    {y:2019,m:"Август",mzp:223000,sal:1200000,k:5.3812,nat:2391603},
+    {y:2019,m:"Декабр",mzp:223000,sal:1200000,k:5.3812,nat:2391603},
+    {y:2020,m:"Январ",mzp:223000,sal:1200000,k:5.3812,nat:2391603},
+    {y:2020,m:"Июл",mzp:238610,sal:400000,k:1.6764,nat:745054},
+    {y:2020,m:"Декабр",mzp:262470,sal:1200000,k:4.572,nat:2031964},
+    {y:2021,m:"Январ",mzp:262470,sal:1800000,k:6.8579,nat:3047902},
+    {y:2021,m:"Сентябр",mzp:289000,sal:1800000,k:6.2284,nat:2768129},
+    {y:2022,m:"Январ",mzp:289000,sal:1800000,k:6.2284,nat:2768129},
+    {y:2022,m:"Май",mzp:324000,sal:1800000,k:5.5556,nat:2469112},
+    {y:2023,m:"Январ",mzp:324000,sal:4800000,k:14.8148,nat:6584240},
+    {y:2023,m:"Апрел",mzp:347000,sal:4800000,k:13.8329,nat:6147848},
+    {y:2023,m:"Октябр",mzp:347000,sal:6200000,k:17.8674,nat:7940928},
+    {y:2023,m:"Ноябр",mzp:347000,sal:23149153,k:66.7123,nat:29649392},
+    {y:2023,m:"Декабр",mzp:372000,sal:48572881,k:130.5723,nat:58031117},
+    {y:2024,m:"Январь",mzp:372000,sal:90945763,k:244.4779,nat:108654942},
+    {y:2024,m:"Феврал",mzp:372000,sal:6200000,k:16.6667,nat:7407293},
+  ]
 };
 
-// ── LANG ──
-function t(key) { return (T[currentLang] || T.uz)[key] || key; }
+// ═══════════════════════════════════════════
+// SYSTEM PROMPT
+// ═══════════════════════════════════════════
+const SYS = `Сен Ўзбекистон Республикаси пенсия тизими бўйича малакали аудитор ассистентсан.
 
-function applyLang() {
-  const l = currentLang;
-  document.getElementById('app-title').textContent = t('appTitle');
-  document.getElementById('app-sub').textContent = t('appSub');
-  document.getElementById('tab-chat-label').textContent = t('tabChat');
-  document.getElementById('tab-pdf-label').textContent = t('tabPdf');
-  document.getElementById('tab-inn-label').textContent = t('tabInn');
-  document.getElementById('tab-settings-label').textContent = t('tabSettings');
-  document.getElementById('welcome-msg').textContent = t('welcome');
-  document.getElementById('upload-title').textContent = t('uploadTitle');
-  document.getElementById('upload-sub').textContent = t('uploadSub');
-  document.getElementById('analyze-label').textContent = t('analyzeLabel');
-  document.getElementById('inn-label').textContent = t('innLabel');
-  document.getElementById('fio-label').textContent = t('fioLabel');
-  document.getElementById('search-label').textContent = t('searchLabel');
-  document.getElementById('chat-input').placeholder = t('chatPlaceholder');
-  document.getElementById('settings-api-title').textContent = t('apiTitle');
-  document.getElementById('settings-server-title').textContent = t('serverTitle');
-  document.getElementById('settings-about-title').textContent = t('aboutTitle');
-  document.getElementById('settings-model-label').textContent = t('modelLabel');
-  document.getElementById('settings-status-label').textContent = t('statusLabel');
-  document.getElementById('settings-server-label').textContent = t('serverLabel');
-  document.getElementById('settings-server-status-label').textContent = t('serverStatusLabel');
-  document.getElementById('settings-lang-label').textContent = t('langLabel');
-  document.getElementById('current-lang-display').textContent = t('langDisplay');
-  document.getElementById('test-btn-label').textContent = t('testBtn');
-  document.getElementById('server-btn-label').textContent = t('serverBtn');
-  document.getElementById('lang-display').textContent = l.toUpperCase();
-  ['uz','kr','ru'].forEach(c => {
-    document.getElementById('check-'+c).style.display = c===l ? '' : 'none';
-    document.getElementById('lang-'+c).classList.toggle('selected', c===l);
+ҚОНУНЧИЛИК:
+- Ёшга доир: Эркак 60 ёш / 25 йил, Аёл 55 ёш / 20 йил
+- СИЗП = Жами индекслаш ÷ 60 ой
+- Ортиқча стаж: ҳар йил +1% (макс 20%)
+- Ошириш: 01.09.2024 → ×1.15, 01.07.2025 → ×1.10, жами ×1.265
+- Ҳарбий хизмат умумий стажга кириши шарт
+
+АУДИТ ТАРТИБИ:
+1. Стаж тўғрилиги
+2. Иш ҳақи индекслаши
+3. СИЗП ҳисоби
+4. Таянч миқдор
+5. Ошириш фоизи ва суммаси
+6. Умумий миқдор
+7. Хулоса ва тавсиялар
+
+Ўзбек кирилл алифбосида жавоб бер. Аниқ ва қисқа.`;
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let chatHistory = [], isTyping = false, aFile = null;
+
+function gs(k){ return localStorage.getItem(k)||'' }
+function saveSet(){
+  ['s-api','s-pfmf','s-yammt','s-inps','s-tax'].forEach(id=>{
+    const map={'s-api':'apiKey','s-pfmf':'pfmfUrl','s-yammt':'yammtUrl','s-inps':'inpsUrl','s-tax':'taxUrl'};
+    localStorage.setItem(map[id], document.getElementById(id).value);
   });
 }
 
-function setLang(l) { currentLang = l; localStorage.setItem('lang', l); applyLang(); closeLang(); }
-function openLang() { document.getElementById('lang-modal').classList.add('open'); }
-function closeLang() { document.getElementById('lang-modal').classList.remove('open'); }
-
-// ── TABS ──
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-  document.getElementById('page-'+name).classList.add('active');
+// ═══════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════
+function goTab(n){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+n).classList.add('active');
+  document.getElementById('page-'+n).classList.add('active');
 }
 
-// ── TOAST ──
-function showToast(msg, dur=2000) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), dur);
-}
+// ═══════════════════════════════════════════
+// FORMAT HELPERS
+// ═══════════════════════════════════════════
+function fmt(n){ return Math.round(n).toLocaleString('ru')+' сўм' }
+function fmtN(n){ return Math.round(n).toLocaleString('ru') }
+function nowTime(){ return new Date().toLocaleTimeString('uz-UZ',{hour:'2-digit',minute:'2-digit'}) }
 
-// ── TIME ──
-function nowTime() {
-  return new Date().toLocaleTimeString('uz-UZ', {hour:'2-digit', minute:'2-digit'});
-}
+// ═══════════════════════════════════════════
+// PROFILE RENDER
+// ═══════════════════════════════════════════
+function renderProfile(d, pinfl){
+  // QAROR
+  document.getElementById('q-num').textContent = d.qaror_num;
+  document.getElementById('q-name').textContent = d.name;
+  document.getElementById('q-date').textContent = d.assign_date;
+  document.getElementById('q-term').textContent = d.term;
+  document.getElementById('q-type').textContent = d.type;
+  document.getElementById('q-amount').textContent = fmt(d.pension_base);
+  document.getElementById('q-boss').textContent = d.boss;
+  document.getElementById('q-lead').textContent = d.lead;
+  document.getElementById('q-insp').textContent = d.insp;
 
-// ── CHAT ──
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
+  // HERO
+  document.getElementById('h-name').textContent = d.name;
+  document.getElementById('h-pinfl').textContent = 'ПИНФЛ: '+pinfl;
+  document.getElementById('h-type').textContent = d.type;
+  document.getElementById('h-cond').textContent = d.condition;
+  document.getElementById('h-gender').textContent = d.gender;
 
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-}
+  // ASOSIY
+  document.getElementById('p-birth').textContent = d.birth;
+  document.getElementById('p-gender').textContent = d.gender;
+  document.getElementById('p-apply').textContent = d.apply_date;
+  document.getElementById('p-assign').textContent = d.assign_date;
+  document.getElementById('p-calc').textContent = d.calc_date;
 
-function addMessage(text, role) {
-  const msgs = document.getElementById('messages');
-  const div = document.createElement('div');
-  div.className = 'msg msg-' + role;
-  div.innerHTML = `<div class="msg-bubble">${text.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>
-    <div class="msg-time">${nowTime()}</div>`;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  return div;
-}
+  // PENSION AMOUNT
+  const cur = Math.round(d.pension_base * d.osh_k);
+  document.getElementById('pen-base').textContent = fmt(d.pension_base);
+  document.getElementById('pen-tayanch').textContent = fmt(d.pension_tayanch);
+  document.getElementById('pen-osh-sum').textContent = fmt(d.pension_osh_sum);
+  document.getElementById('pen-osh-pct').textContent = d.pension_osh_pct;
+  document.getElementById('pen-cur').innerHTML = 'Жорий миқдор (ошириш билан): <strong>'+fmt(cur)+'</strong>';
+  document.getElementById('osh-base-v').textContent = fmt(d.pension_base);
+  document.getElementById('osh-cur-v').textContent = fmt(cur);
 
-function addTyping() {
-  const msgs = document.getElementById('messages');
-  const div = document.createElement('div');
-  div.className = 'msg msg-bot';
-  div.id = 'typing-indicator';
-  div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
+  // HISOB
+  document.getElementById('p-sizp').textContent = fmt(d.sizp);
+  document.getElementById('p-counted').textContent = fmt(d.counted_salary);
+  document.getElementById('p-smzp').textContent = fmtN(d.smzp)+' сўм';
+  document.getElementById('p-idx-total').textContent = fmt(d.idx_total);
+  document.getElementById('p-osh-k').textContent = '×'+d.osh_k+' (×1.15 × ×1.10)';
 
-function removeTyping() {
-  const el = document.getElementById('typing-indicator');
-  if (el) el.remove();
-}
+  // SMZP formula
+  document.getElementById('smzp-formula').textContent = d.smzp_formula;
 
-async function sendMessage() {
-  if (isTyping) return;
-  const inp = document.getElementById('chat-input');
-  const text = inp.value.trim();
-  if (!text) return;
+  // STAJ
+  document.getElementById('staj-total').textContent = d.staj_total;
+  document.getElementById('staj-req').textContent = d.staj_req;
+  document.getElementById('staj-imtiyoz').textContent = d.staj_imtiyoz;
+  document.getElementById('staj-extra').textContent = d.staj_extra;
 
-  const key = localStorage.getItem('apiKey') || '';
-  if (!key) { showToast(t('noKey')); switchTab('settings'); return; }
-
-  addMessage(text, 'user');
-  chatHistory.push({ role: 'user', content: text });
-  inp.value = ''; inp.style.height = 'auto';
-
-  isTyping = true;
-  document.getElementById('send-btn').disabled = true;
-  addTyping();
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1500,
-        system: t('systemPrompt'),
-        messages: chatHistory.slice(-10)
-      })
-    });
-    const data = await resp.json();
-    removeTyping();
-    const answer = data.content?.[0]?.text || '❌ Xato yuz berdi';
-    chatHistory.push({ role: 'assistant', content: answer });
-    addMessage(answer, 'bot');
-  } catch(e) {
-    removeTyping();
-    addMessage('❌ Ulanishda xato: ' + e.message, 'bot');
-  }
-
-  isTyping = false;
-  document.getElementById('send-btn').disabled = false;
-}
-
-// ── PDF ──
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('upload-zone').classList.remove('drag');
-  const f = e.dataTransfer.files[0];
-  if (f) handleFile(f);
-}
-
-function handleFile(file) {
-  if (!file) return;
-  selectedFile = file;
-  document.getElementById('file-name').textContent = file.name;
-  document.getElementById('file-size').textContent = (file.size/1024).toFixed(1) + ' KB';
-  document.getElementById('file-preview').style.display = 'block';
-  document.getElementById('pdf-result').innerHTML = '';
-}
-
-function clearFile() {
-  selectedFile = null;
-  document.getElementById('file-preview').style.display = 'none';
-  document.getElementById('file-input').value = '';
-  document.getElementById('pdf-result').innerHTML = '';
-}
-
-async function analyzeFile() {
-  if (!selectedFile) { showToast(t('noFile')); return; }
-  const key = localStorage.getItem('apiKey') || '';
-  if (!key) { showToast(t('noKey')); switchTab('settings'); return; }
-
-  const btn = document.getElementById('analyze-btn');
-  btn.disabled = true;
-  document.getElementById('analyze-label').textContent = t('analyzing');
-  document.getElementById('pdf-result').innerHTML = '';
-
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    try {
-      let content;
-      if (selectedFile.name.endsWith('.pdf')) {
-        const b64 = e.target.result.split(',')[1];
-        content = [
-          { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } },
-          { type: 'text', text: 'Ushbu pensiya hujjatini to\'liq tahlil qil. Staj, ish haqi, pensiya miqdori, xatolar va tavsiyalarni batafsil yoz.' }
-        ];
-      } else {
-        const text = e.target.result;
-        content = `Quyidagi pensiya hujjatini to'liq tahlil qil:\n\n${text.slice(0, 8000)}`;
-      }
-
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
-        },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 2000,
-          system: t('systemPrompt'),
-          messages: [{ role: 'user', content }]
-        })
-      });
-
-      const data = await resp.json();
-      const answer = data.content?.[0]?.text || '❌ Xato';
-      showResult('pdf-result', answer);
-    } catch(err) {
-      document.getElementById('pdf-result').innerHTML =
-        `<div class="result-card"><div style="color:var(--err)">❌ ${err.message}</div></div>`;
-    }
-
-    btn.disabled = false;
-    document.getElementById('analyze-label').textContent = t('analyzeLabel');
-  };
-
-  if (selectedFile.name.endsWith('.pdf')) reader.readAsDataURL(selectedFile);
-  else reader.readAsText(selectedFile, 'utf-8');
-}
-
-// ── INN SEARCH ──
-async function searchINN() {
-  const inn = document.getElementById('inn-input').value.trim();
-  const fio = document.getElementById('fio-input').value.trim();
-  if (!inn) { showToast(t('innEmpty')); return; }
-
-  const key = localStorage.getItem('apiKey') || '';
-  if (!key) { showToast(t('noKey')); switchTab('settings'); return; }
-
-  const srv = localStorage.getItem('serverUrl') || '';
-  const btn = document.getElementById('search-btn');
-  btn.disabled = true;
-  document.getElementById('search-label').textContent = t('searching');
-  document.getElementById('inn-result').innerHTML = '';
-
-  let pensionData = '';
-
-  // Avval lokal serverdan ma'lumot olishga harakat
-  if (srv) {
-    try {
-      const r = await fetch(`${srv}/pensioner?inn=${inn}`, { signal: AbortSignal.timeout(5000) });
-      if (r.ok) {
-        const d = await r.json();
-        pensionData = '\n\nPensiya tizimidan olingan ma\'lumotlar:\n' + JSON.stringify(d, null, 2);
-      }
-    } catch(e) {
-      pensionData = '\n\n(Lokal serverdan ma\'lumot olinmadi — server ulangan emas)';
-    }
-  }
-
-  const prompt = `INN: ${inn}${fio ? '\nF.I.O.: ' + fio : ''}${pensionData}\n\nBu fuqaroning pensiya ma'lumotlarini tahlil qil. Agar ma'lumot bo'lmasa, INN bo'yicha qanday ma'lumot topish mumkinligini ko'rsat.`;
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1500,
-        system: t('systemPrompt'),
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const data = await resp.json();
-    const answer = data.content?.[0]?.text || '❌ Xato';
-    showResult('inn-result', answer);
-  } catch(e) {
-    document.getElementById('inn-result').innerHTML =
-      `<div class="result-card"><div style="color:var(--err)">❌ ${e.message}</div></div>`;
-  }
-
-  btn.disabled = false;
-  document.getElementById('search-label').textContent = t('searchLabel');
-}
-
-// ── SHOW RESULT ──
-function showResult(containerId, text) {
-  const html = `
-    <div class="result-card">
-      <div class="result-header">
-        <span>📋</span>
-        <span class="result-title">${t('resultTitle')}</span>
-        <button onclick="copyText(\`${text.replace(/`/g,"'")}\`)"
-          style="margin-left:auto;background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;">📋</button>
+  const sl = document.getElementById('staj-list');
+  sl.innerHTML = d.staj_list.map(s=>`
+    <div class="staj-item">
+      <div class="staj-n">${s.n}</div>
+      <div class="staj-info">
+        <div class="staj-per">${s.from} — ${s.to}</div>
+        <div class="staj-type">${s.type}</div>
       </div>
-      <div style="font-size:13px;line-height:1.7;color:var(--text);white-space:pre-wrap;">${text.replace(/</g,'&lt;')}</div>
-    </div>`;
-  document.getElementById(containerId).innerHTML = html;
+      <div class="staj-dur">${s.dur}</div>
+    </div>`).join('');
+
+  const s10 = document.getElementById('staj10-list');
+  s10.innerHTML = d.staj10_list.map(s=>`
+    <div class="staj-item">
+      <div class="staj-n">${s.n}</div>
+      <div class="staj-info">
+        <div class="staj-per">${s.from} — ${s.to}</div>
+        <div class="staj-type">${s.type}</div>
+      </div>
+      <div class="staj-dur">${s.dur}</div>
+    </div>`).join('');
+  document.getElementById('staj10-total').textContent = d.staj10_total;
+
+  // SALARY TABLE
+  const sb = document.getElementById('salary-tbody');
+  let salTotal=0, idxTotal=0;
+  sb.innerHTML = d.salary_years.map(r=>{
+    salTotal+=r.sal; idxTotal+=r.idx;
+    return `<tr><td>${r.y}</td><td class="num-r">${fmtN(r.sal)}</td><td class="num-r">${r.idx?fmtN(r.idx):'—'}</td></tr>`;
+  }).join('');
+  document.getElementById('sal-total').textContent = fmtN(salTotal);
+  document.getElementById('idx-total-foot').textContent = fmtN(idxTotal);
+
+  // INDEX TABLE
+  const ib = document.getElementById('idx-tbody');
+  let curY = null;
+  let html = '';
+  d.idx_months.forEach(r=>{
+    if(r.y !== curY){
+      if(curY) html += `<tr class="yr-row"><td colspan="4">${curY} ЙИЛ</td><td></td></tr>`;
+      curY = r.y;
+      html += `<tr class="yr-row"><td colspan="5" style="color:#4527A0;font-weight:800;background:#EDE7F6">${r.y} йил ▼</td></tr>`;
+    }
+    html += `<tr>
+      <td>${r.m}</td>
+      <td>${fmtN(r.mzp)}</td>
+      <td>${fmtN(r.sal)}</td>
+      <td>${r.k}</td>
+      <td class="num-r" style="font-weight:700;color:var(--p)">${fmtN(r.nat)}</td>
+    </tr>`;
+  });
+  ib.innerHTML = html;
+  document.getElementById('idx-grand-total').textContent = fmtN(d.idx_total);
+
+  // PDF info
+  document.getElementById('pdf-qaror-sub').textContent = d.qaror_num+' · '+d.assign_date;
+
+  // show
+  document.getElementById('pinfl-box').style.display='none';
+  document.getElementById('profile-result').style.display='block';
 }
 
-function copyText(text) {
-  navigator.clipboard.writeText(text).then(() => showToast(t('copyOk')));
+// ═══════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════
+async function doSearch(){
+  const pinfl = document.getElementById('pinfl-inp').value.trim();
+  if(pinfl.length < 5){ showToast('⚠️ ПИНФЛ киритинг'); return; }
+
+  const btn = document.getElementById('pinfl-btn');
+  btn.disabled=true; btn.textContent='⏳';
+  document.getElementById('pinfl-loading').style.display='block';
+
+  const pfmfUrl = gs('pfmfUrl');
+  let loaded = false;
+
+  if(pfmfUrl){
+    try{
+      const r = await fetch(`${pfmfUrl}/pensioner?pinfl=${pinfl}`,{signal:AbortSignal.timeout(6000)});
+      if(r.ok){ const d=await r.json(); renderProfile(d,pinfl); loaded=true; }
+    }catch(e){}
+  }
+
+  if(!loaded){
+    // Demo ma'lumotlar bilan ko'rsatish
+    const demo = {...DEMO, pinfl};
+    renderProfile(demo, pinfl);
+    showToast('ℹ️ Намуна маълумотлар (API уланмаган)');
+  }
+
+  document.getElementById('pinfl-loading').style.display='none';
+  btn.disabled=false; btn.textContent='🔍';
 }
 
-// ── SETTINGS ──
-function saveApiKey(val) {
-  localStorage.setItem('apiKey', val);
-  document.getElementById('api-status').textContent = val ? '✅ Kiritilgan' : '⚠️ Sozlanmagan';
+function clearSearch(){
+  document.getElementById('pinfl-box').style.display='block';
+  document.getElementById('profile-result').style.display='none';
+  document.getElementById('pinfl-inp').value='';
 }
 
-function saveServerUrl(val) {
-  localStorage.setItem('serverUrl', val);
+// ═══════════════════════════════════════════
+// ELECTRONIC DATA
+// ═══════════════════════════════════════════
+async function fetchApi(type){
+  const urls={yammt:gs('yammtUrl'),inps:gs('inpsUrl'),tax:gs('taxUrl')};
+  const url = urls[type];
+  if(!url){ showToast('⚠️ '+type.toUpperCase()+' API манзилини созламаларда киритинг'); return; }
+  showToast('⏳ '+type.toUpperCase()+' маълумот олинмоқда...');
+  try{
+    const r=await fetch(url,{signal:AbortSignal.timeout(8000)});
+    if(r.ok){
+      const d=await r.json();
+      if(type==='yammt'){
+        if(d.workplace) document.getElementById('y-work').textContent=d.workplace;
+        if(d.position) document.getElementById('y-pos').textContent=d.position;
+        if(d.hire_date) document.getElementById('y-from').textContent=d.hire_date;
+        if(d.last_work_day) document.getElementById('y-to').textContent=d.last_work_day;
+        if(d.staj) document.getElementById('y-staj').textContent=d.staj;
+      } else if(type==='inps'){
+        if(d.account) document.getElementById('i-acc').textContent=d.account;
+        if(d.total) document.getElementById('i-total').textContent=fmt(d.total);
+        if(d.monthly) document.getElementById('i-monthly').textContent=fmt(d.monthly);
+        if(d.last_payment) document.getElementById('i-last').textContent=d.last_payment;
+      } else if(type==='tax'){
+        if(d.inn) document.getElementById('t-inn').textContent=d.inn;
+        if(d.salary_2023) document.getElementById('t-2023').textContent=fmt(d.salary_2023);
+        if(d.salary_2022) document.getElementById('t-2022').textContent=fmt(d.salary_2022);
+        if(d.tax_paid) document.getElementById('t-tax').textContent=fmt(d.tax_paid);
+      }
+      showToast('✅ '+type.toUpperCase()+' маълумотлар олинди');
+    }
+  }catch(e){ showToast('❌ '+type.toUpperCase()+' уланмади'); }
 }
 
-async function testApi() {
-  const key = localStorage.getItem('apiKey') || '';
-  if (!key) { showToast(t('noKey')); return; }
-  try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 10,
-        messages: [{ role: 'user', content: 'hi' }]
-      })
+// ═══════════════════════════════════════════
+// AUDIT
+// ═══════════════════════════════════════════
+async function runAudit(){
+  const key=gs('apiKey');
+  if(!key){ showToast('⚠️ API калит киритинг'); openSettings(); return; }
+  const btn=document.getElementById('audit-btn');
+  btn.disabled=true; btn.textContent='⏳ Аудит...';
+
+  const prompt=`Қуйидаги пенсионер маълумотларини тўлиқ аудит қил:
+
+Ф.И.О.: Мирсаидов Бахтиёр Мирвохидович
+Туғилган: 06.03.1964 | Жинси: Эркак
+Пенсия тури: Ёшга доир | Тайинлаш: 01.07.2025
+
+ИШ СТАЖИ: 42 йил 4 ой (Талаб: 25 йил ✓)
+Ҳарбий хизмат: 18.11.1982–27.12.1984 (2й 1о 10к)
+Давлат суғурта: 05.02.1985–05.03.2024
+
+СИЗП: 6 346 607 сўм/ой
+Ҳисобга олинган: 5 652 000 сўм
+Таянч: 3 108 600 сўм
+Ошириш 17%: 960 840 сўм
+Жами тайинланган: 4 069 440 сўм
+Ошириш ×1.265 → Жорий: ~5 147 841 сўм
+
+Индексланган жами: 380 796 443 сўм ÷ 60 = 6 346 607 сўм ✓
+
+Ҳар бир банд бўйича тўлиқ аудит ёз.`;
+
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2000,system:SYS,messages:[{role:'user',content:prompt}]})
     });
-    const ok = r.ok;
-    document.getElementById('api-status').textContent = ok ? t('apiOk') : t('apiErr');
-    showToast(ok ? t('apiOk') : t('apiErr'));
-  } catch(e) {
-    document.getElementById('api-status').textContent = t('apiErr');
-    showToast(t('apiErr'));
-  }
+    const data=await r.json();
+    const txt=data.content?.[0]?.text||'Хато';
+    showAuditResult(txt);
+  }catch(e){ showToast('❌ '+e.message); }
+  btn.disabled=false; btn.textContent='🔬 Аудитни бошлаш';
 }
 
-async function checkServer() {
-  const srv = localStorage.getItem('serverUrl') || '';
-  if (!srv) { showToast('Server manzili kiritilmagan'); return; }
-  try {
-    const r = await fetch(`${srv}/ping`, { signal: AbortSignal.timeout(3000) });
-    const ok = r.ok;
-    document.getElementById('server-status').textContent = ok ? t('serverOk') : t('serverErr');
-    showToast(ok ? t('serverOk') : t('serverErr'));
-  } catch(e) {
-    document.getElementById('server-status').textContent = t('serverErr');
-    showToast(t('serverErr'));
-  }
+function showAuditResult(txt){
+  const el=document.getElementById('audit-result');
+  el.style.display='block';
+  el.innerHTML=`<div class="audit-section">
+    <div class="audit-ttl">📋 Аудит Ҳисоботи</div>
+    <div style="font-size:13px;line-height:1.75;color:var(--t);white-space:pre-wrap">${txt.replace(/</g,'&lt;')}</div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btn-p" style="flex:1" onclick="window.print()">🖨️ Чоп этиш</button>
+      <button class="btn btn-o" style="flex:1" onclick="navigator.clipboard.writeText(\`${txt.replace(/`/g,"'")}\`).then(()=>showToast('📋 Нусхаланди!'))">📋 Нусха</button>
+    </div>
+  </div>`;
+  el.scrollIntoView({behavior:'smooth'});
 }
 
-// ── INIT ──
-document.addEventListener('DOMContentLoaded', () => {
-  applyLang();
-  document.getElementById('welcome-time').textContent = nowTime();
+// Audit file
+function handleADrop(e){
+  e.preventDefault();
+  document.getElementById('a-upl').classList.remove('drag');
+  setAFile(e.dataTransfer.files[0]);
+}
+function setAFile(f){
+  if(!f) return;
+  aFile=f;
+  document.getElementById('a-file-info').style.display='block';
+  document.getElementById('a-fname').textContent=f.name;
+  document.getElementById('a-fsize').textContent=(f.size/1024).toFixed(1)+' KB';
+}
+function clearAFile(){
+  aFile=null;
+  document.getElementById('a-file-info').style.display='none';
+  document.getElementById('f-audit').value='';
+}
+async function analyzeAFile(){
+  if(!aFile) return;
+  const key=gs('apiKey');
+  if(!key){ showToast('⚠️ API калит киритинг'); openSettings(); return; }
+  const btn=document.getElementById('a-analyze-btn');
+  btn.disabled=true; btn.textContent='⏳ Таҳлил...';
+  const reader=new FileReader();
+  reader.onload=async(e)=>{
+    try{
+      let msgs;
+      if(aFile.name.toLowerCase().endsWith('.pdf')){
+        const b64=e.target.result.split(',')[1];
+        msgs=[{role:'user',content:[
+          {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
+          {type:'text',text:'Ушбу пенсия ҳужжатини тўлиқ аудит қил.'}
+        ]}];
+      } else {
+        msgs=[{role:'user',content:'Ушбу пенсия ҳужжатини тўлиқ аудит қил:\n\n'+e.target.result.slice(0,8000)}];
+      }
+      const r=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2000,system:SYS,messages:msgs})
+      });
+      const data=await r.json();
+      showAuditResult(data.content?.[0]?.text||'Хато');
+    }catch(err){ showToast('❌ '+err.message); }
+    btn.disabled=false; btn.textContent='🔬 Таҳлил қилиш';
+  };
+  if(aFile.name.toLowerCase().endsWith('.pdf')) reader.readAsDataURL(aFile);
+  else reader.readAsText(aFile,'utf-8');
+}
 
-  const savedKey = localStorage.getItem('apiKey') || '';
-  const savedUrl = localStorage.getItem('serverUrl') || '';
-  if (savedKey) {
-    document.getElementById('api-key-input').value = savedKey;
-    document.getElementById('api-status').textContent = '✅ Kiritilgan';
+// ═══════════════════════════════════════════
+// CHAT
+// ═══════════════════════════════════════════
+function autoR(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,90)+'px'}
+
+function addMsg(txt,role){
+  const ms=document.getElementById('msgs');
+  const d=document.createElement('div');
+  d.className='msg msg-'+role;
+  d.innerHTML=`<div class="bbl">${txt.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div><div class="msg-t">${nowTime()}</div>`;
+  ms.appendChild(d);
+  ms.scrollTop=ms.scrollHeight;
+}
+
+function addTyping(){
+  const ms=document.getElementById('msgs');
+  const d=document.createElement('div');
+  d.className='msg msg-b'; d.id='typ';
+  d.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+  ms.appendChild(d); ms.scrollTop=ms.scrollHeight;
+}
+
+async function sendMsg(){
+  if(isTyping) return;
+  const inp=document.getElementById('chat-inp');
+  const txt=inp.value.trim();
+  if(!txt) return;
+  const key=gs('apiKey');
+  if(!key){ showToast('⚠️ Созламаларда API калит киритинг'); openSettings(); return; }
+  addMsg(txt,'u');
+  chatHistory.push({role:'user',content:txt});
+  inp.value=''; inp.style.height='auto';
+  isTyping=true;
+  document.getElementById('send-btn').disabled=true;
+  addTyping();
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:SYS,messages:chatHistory.slice(-12)})
+    });
+    const data=await r.json();
+    const ans=data.content?.[0]?.text||'❌ Хато';
+    document.getElementById('typ')?.remove();
+    chatHistory.push({role:'assistant',content:ans});
+    addMsg(ans,'b');
+  }catch(e){
+    document.getElementById('typ')?.remove();
+    addMsg('❌ Уланишда хато: '+e.message,'b');
   }
-  if (savedUrl) document.getElementById('server-url-input').value = savedUrl;
+  isTyping=false;
+  document.getElementById('send-btn').disabled=false;
+}
+
+// ═══════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════
+function openSettings(){
+  document.getElementById('s-api').value=gs('apiKey');
+  document.getElementById('s-pfmf').value=gs('pfmfUrl');
+  document.getElementById('s-yammt').value=gs('yammtUrl');
+  document.getElementById('s-inps').value=gs('inpsUrl');
+  document.getElementById('s-tax').value=gs('taxUrl');
+  document.getElementById('set-modal').classList.add('open');
+}
+function closeSet(){ document.getElementById('set-modal').classList.remove('open') }
+
+async function testApi(){
+  const key=gs('apiKey');
+  if(!key){ showToast('⚠️ API калит киритилмаган'); return; }
+  showToast('⏳ Текширилмоқда...');
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:5,messages:[{role:'user',content:'hi'}]})
+    });
+    showToast(r.ok?'✅ API уланди!':'❌ API хато: '+r.status);
+  }catch(e){ showToast('❌ Уланмади'); }
+}
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+function showToast(m,d=2500){
+  const el=document.getElementById('toast');
+  el.textContent=m; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),d);
+}
+
+// INIT
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('wt').textContent=nowTime();
 });
 </script>
 </body>
